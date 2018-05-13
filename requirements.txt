@@ -1,0 +1,6 @@
+rsa
+httplib2
+oauth2client
+pyasn1
+uritemplate
+google-api-python-client

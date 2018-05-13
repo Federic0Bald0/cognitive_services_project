@@ -1,0 +1,6 @@
+indexes:
+
+- kind: WebPage
+  properties:
+  - name: user_key
+  - name: is_single_page
