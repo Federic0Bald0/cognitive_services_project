@@ -2,6 +2,26 @@
 
 <div class="container">
 
+
+        <div class="row">
+          <div class="col-md-12 col-md-offset-3">
+            <div class="file-loading">
+                <input id="input-dim-1" name="input-dim-1[]" multiple type="file" accept="image/*">
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $("#input-dim-1").fileinput({
+            uploadUrl: "/file-upload-batch/2",
+            allowedFileExtensions: ["jpg", "png", "gif"],
+            minImageWidth: 50,
+            minImageHeight: 50
+        });
+    });
+</script>
+
 
 {% endblock %}
