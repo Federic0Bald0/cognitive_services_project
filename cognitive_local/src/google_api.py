@@ -1,10 +1,8 @@
 # coding: utf-8
-# import json
-# import urllib
-# import logging
-
-# from google.appengine.api import urlfetch
+import json
 import requests
+
+API_KEY = 'AIzaSyDUVomcGLoMCZHUnEqo0nRGwOCb66v-e0A'
 
 
 def call_vision_api(url):
@@ -26,20 +24,10 @@ def call_vision_api(url):
             ]
         }
 
-    # try:
-    #     result = urlfetch.fetch(
-    #         url='https://vision.googleapis.com/v1/images:annotate?key=AIzaSyAu3mTFbbDfhiXX-rehjnA7eQjnq5EAwys',
-    #         payload=json.dumps(request),
-    #         method=urlfetch.POST,
-    #         headers={'Content-Type': 'application/json'})
-    #     return json.loads(result.content)
-    # except urlfetch.Error:
-    #     logging.exception('Caught exception fetching url')
-
     r = requests.post(
-        'https://vision.googleapis.com/v1/images:annotate? \
-        key=AIzaSyAu3mTFbbDfhiXX-rehjnA7eQjnq5EAwys',
-        data=request,
+        url='https://vision.googleapis.com/v1/images:annotate?key={}'
+            .format(API_KEY),
+        data=json.dumps(request),
         headers={'Content-Type': 'application/json'}
         )
 
