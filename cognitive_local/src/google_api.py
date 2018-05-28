@@ -11,20 +11,20 @@ def call_vision_api(url):
     request = {
             "requests": [
                 {
-                "image": {
-                    "source": {
-                        "imageUri": url
+                    "image": {
+                        "source": {
+                            "imageUri": url
                         }
-                },
-                "features": [
-                    {
-                    "type": "LOGO_DETECTION",
-                    "maxResults": 1
-                    }
-                ]
+                    },
+                    "features": [
+                        {
+                            "type": "LOGO_DETECTION",
+                            "maxResults": 1
+                        }
+                    ]
                 }
             ]
-            }
+        }
 
     # try:
     #     result = urlfetch.fetch(
@@ -37,9 +37,10 @@ def call_vision_api(url):
     #     logging.exception('Caught exception fetching url')
 
     r = requests.post(
-        'https://vision.googleapis.com/v1/images:annotate?key=AIzaSyAu3mTFbbDfhiXX-rehjnA7eQjnq5EAwys',
-        data = request,
-        headers = {'Content-Type': 'application/json'}
+        'https://vision.googleapis.com/v1/images:annotate? \
+        key=AIzaSyAu3mTFbbDfhiXX-rehjnA7eQjnq5EAwys',
+        data=request,
+        headers={'Content-Type': 'application/json'}
         )
 
     return r.text
