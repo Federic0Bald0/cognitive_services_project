@@ -12,10 +12,12 @@ from matplotlib import pyplot as plt
 # The two honest comparisons between the same books are (GoT3,GoT3_1)
 # and (GEB,GEB_photo)
 
-queriesPath = 'Book_Covers/Query/'
-imagesPath = 'Book_Covers/Images/'
+
+queriesPath = 'cognitive_local/src/Book_Covers/Query/'
+imagesPath = 'cognitive_local/src/Book_Covers/Images/'
 
 distance_coef = 0.9					# before the value was 0.75
+
 
 for query in os.listdir(queriesPath):
     for image in os.listdir(imagesPath):
