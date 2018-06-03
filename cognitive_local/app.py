@@ -3,7 +3,7 @@ from src.google_api import call_vision_api
 from flask import Flask, redirect, url_for, request, render_template
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'static/pictures'
+app.config['UPLOAD_FOLDER'] = 'cognitive_local/static/pictures'
 
 from werkzeug import secure_filename
 
@@ -21,11 +21,12 @@ def show_result():
         f = request.files['pic']
         filename = secure_filename(f.filename)
         f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        return render_template('result.html', picture=filename)
+        return render_template(
+            'result.html',
+             picture=filename,
+             result=call_vision_api(filename))
 
 if __name__ == '__main__':
-    # print call_vision_api("https://www.google.com/images/branding/ \
-    # 						 googlelogo/2x/googlelogo_color_272x92dp.png")
     app.debug = True
     app.run(debug=True)
 

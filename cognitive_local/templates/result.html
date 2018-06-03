@@ -1,12 +1,15 @@
 {% include 'base/startblock.html' %}
 
 <div class="row">
-	<img id="inputpic" src="/static/pictures/{{picture}}" alt="error" height="500">
-	<p> JSON Result </p>
+    <div class="col-md-auto">
+        <img id="inputpic" src="/static/pictures/{{picture}}" alt="error" height="500">
+        <form action="http://localhost:5000" method="GET" enctype = "multipart/form-data">
+            <input type="submit" name="" value="Upload Another Picture" />
+        </form>
+    </div>
+    <div class="col-md-auto">
+        <pre> {{result}} </pre>
+    </div>
 </div>
-
-<form action="http://localhost:5000" method="GET" enctype = "multipart/form-data">
-	<input type="submit" name="" value="Upload Another Picture" />
-</form>
 
 {% include 'base/endblock.html' %}
