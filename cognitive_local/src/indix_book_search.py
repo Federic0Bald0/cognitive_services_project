@@ -6,8 +6,9 @@ import requests
 def search_book(keywords):
 
     params = {
-        'countryCode': 'GB',
+        'countryCode': 'US',
         'q': keywords,
+        'storeId': 24,
         'categoryId': [28780, 28763, 28769, 28766, 28770, 28767, 28772, 28773,
                        28775, 28776, 28777, 28778, 28779, 28781, 28782, 27724,
                        28784, 28787, 28785, 28786],  # category of Books
@@ -22,4 +23,4 @@ def search_book(keywords):
 
     return r.text
 
-print(json.dumps(search_book('Harty Potter e la pietra filosofale'), indent=4, sort_keys=True))
+print(search_book('harry potter and the philosopher\'s stone'))

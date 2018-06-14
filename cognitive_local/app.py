@@ -1,3 +1,4 @@
+# coding: utf-8
 import os
 from src.google_api import call_vision_api
 from flask import Flask, redirect, url_for, request, render_template
