@@ -22,7 +22,8 @@ def get_book_data(url):
     list_reviews = []
     for review in reviews:
         list_reviews.append(review.text.encode('utf-8'))
-    list_reviews.pop(0)
+    if list_reviews:
+        list_reviews.pop(0)
     rating = soup.find("span", {"itemprop": "ratingValue"})
     if rating:
         rating = rating.text
@@ -48,7 +49,7 @@ if __name__ == '__main__':
         writer = csv.writer(f, delimiter=',')
         writer.writerow(['title', 'author', 'editor',
                          'image_link', 'rating', 'reviews'])
-        for i in range(1, 10):
+        for i in range(1, 30):
             search_among_books(
                 ("https://www.lafeltrinelli.it/libri/c-1/0/{}/?prkw=&prm=").
                 format(i))

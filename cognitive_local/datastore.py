@@ -37,4 +37,4 @@ book_key = add_book(1,
                     image="this is a placeholder",
                     )
 print(list_books())
-delete_book(book_key)
+# delete_book(book_key)
