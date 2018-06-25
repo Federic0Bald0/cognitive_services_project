@@ -5,7 +5,10 @@ from difflib import SequenceMatcher
 from base64 import b64encode
 from os.path import dirname, join
 
-API_KEY = 'AIzaSyDUVomcGLoMCZHUnEqo0nRGwOCb66v-e0A'
+json_data = open('credentials_vision.json').read()
+data = json.loads(json_data)
+
+API_KEY = data['api_key']
 PATH_IMAGES = 'static/pictures/'
 
 def encode_image(picture):

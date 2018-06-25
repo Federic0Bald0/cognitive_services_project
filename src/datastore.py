@@ -2,7 +2,7 @@ from google.cloud import datastore
 import csv
 
 client = datastore.Client.from_service_account_json(
-                        'credentials.json')
+                        'credentials_datastore.json')
 
 CSV = 'datastore/dataset_test.csv'
 
