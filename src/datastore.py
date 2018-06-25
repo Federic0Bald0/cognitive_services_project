@@ -2,9 +2,9 @@ from google.cloud import datastore
 import csv
 
 client = datastore.Client.from_service_account_json(
-                        './credentials.json')
+                        'credentials.json')
 
-CSV = 'dataset_test.csv'
+CSV = 'datastore/dataset_test.csv'
 
 
 def add_csv():
@@ -14,7 +14,7 @@ def add_csv():
         for (i,row) in enumerate(reader):
             # i+1 because id must not be 0
             add_book(i+1, row[0], row[1], row[3],
-                editor=row[2], reviews=row[4])            
+                editor=row[2], reviews=row[4])
 
 
 def add_book(book_id, title, author, image, editor=None,

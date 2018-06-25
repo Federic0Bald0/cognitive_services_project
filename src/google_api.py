@@ -6,7 +6,7 @@ from base64 import b64encode
 from os.path import dirname, join
 
 API_KEY = 'AIzaSyDUVomcGLoMCZHUnEqo0nRGwOCb66v-e0A'
-PATH_IMAGES = 'cognitive_local/static/pictures/'
+PATH_IMAGES = 'static/pictures/'
 
 def encode_image(picture):
     with open(PATH_IMAGES + picture,'rb') as img:
