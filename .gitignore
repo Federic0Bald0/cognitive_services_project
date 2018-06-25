@@ -1,3 +1,4 @@
 *.pyc
 *.DS_Store
-credentials.json
+credentials*
+.~lock.dataset_test.csv#

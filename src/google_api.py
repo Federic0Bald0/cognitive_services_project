@@ -6,11 +6,15 @@ from difflib import SequenceMatcher
 from base64 import b64encode
 from os.path import dirname, join
 
-API_KEY = 'AIzaSyDUVomcGLoMCZHUnEqo0nRGwOCb66v-e0A'
-PATH_IMAGES = 'cognitive_local/static/pictures/'
+json_data = open('credentials_vision.json').read()
+data = json.loads(json_data)
+
+API_KEY = data['api_key']
+PATH_IMAGES = 'static/pictures/'
+
 
 def encode_image(picture):
-    with open(PATH_IMAGES + picture,'rb') as img:
+    with open(PATH_IMAGES + picture, 'rb') as img:
         img_content = img.read()
         enc = b64encode(img_content)
     return enc
@@ -18,12 +22,12 @@ def encode_image(picture):
 
 def call_vision_api(picture):
     request = {
-            "requests": [
+               "requests": [
                 {
-                "image": {
+                 "image": {
                     "content": encode_image(picture)
-                },
-                "features": [
+                          },
+                 "features": [
                     {
                     "type": "DOCUMENT_TEXT_DETECTION"
                     }
@@ -32,7 +36,7 @@ def call_vision_api(picture):
             ]
             }
 
-    ### JSON for a request with an URL ###
+    # JSON for a request with an URL ###
     # request = {
     #         "requests": [
     #             {
@@ -105,3 +109,4 @@ if __name__ == '__main__':
     print getStringsDiff(
         "Harry Potter e la pietra filosofale",
         "Harty Potter e la pietra filosofale")
+    return r.text

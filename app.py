@@ -1,12 +1,12 @@
 # coding: utf-8
 import os
+from werkzeug import secure_filename
 from src.google_api import call_vision_api
 from flask import Flask, redirect, url_for, request, render_template
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'cognitive_local/static/pictures'
+app.config['UPLOAD_FOLDER'] = 'static/pictures'
 
-from werkzeug import secure_filename
 
 # Templates and File Uploading ###
 

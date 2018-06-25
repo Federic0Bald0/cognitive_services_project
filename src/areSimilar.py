@@ -13,8 +13,8 @@ from matplotlib import pyplot as plt
 # and (GEB,GEB_photo)
 
 
-queriesPath = 'cognitive_local/src/Book_Covers/Query/'
-imagesPath = 'cognitive_local/src/Book_Covers/Images/'
+queriesPath = 'src/Book_Covers/Query/'
+imagesPath = 'src/Book_Covers/Images/'
 
 distance_coef = 0.9					# before the value was 0.75
 
