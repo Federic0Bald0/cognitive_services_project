@@ -11,10 +11,10 @@ def add_csv():
     with open(CSV) as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         header = next(reader, None)
-        for (i,row) in enumerate(reader):
+        for (i, row) in enumerate(reader):
             # i+1 because id must not be 0
             add_book(i+1, row[0], row[1], row[3],
-                editor=row[2], reviews=row[4])
+                     editor=row[2], reviews=row[4])
 
 
 def add_book(book_id, title, author, image, editor=None,
@@ -30,7 +30,7 @@ def add_book(book_id, title, author, image, editor=None,
         'author': author,
         'image': image,
         'editor': editor,
-        'descriptions' : descriptions
+        'descriptions': descriptions
     })
 
     client.put(book)

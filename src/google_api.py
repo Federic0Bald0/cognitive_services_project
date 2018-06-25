@@ -11,29 +11,31 @@ data = json.loads(json_data)
 API_KEY = data['api_key']
 PATH_IMAGES = 'static/pictures/'
 
+
 def encode_image(picture):
-    with open(PATH_IMAGES + picture,'rb') as img:
+    with open(PATH_IMAGES + picture, 'rb') as img:
         img_content = img.read()
         enc = b64encode(img_content)
     return enc
 
+
 def call_vision_api(picture):
     request = {
-            "requests": [
+               "requests": [
                 {
-                "image": {
+                 "image": {
                     "content": encode_image(picture)
-                },
-                "features": [
+                          },
+                 "features": [
                     {
-                    "type": "TEXT_DETECTION"
+                     "type": "TEXT_DETECTION"
                     }
-                ]
+                             ]
                 }
-            ]
+                            ]
             }
 
-    ### JSON for a request with an URL ###
+    # JSON for a request with an URL ###
     # request = {
     #         "requests": [
     #             {
@@ -61,8 +63,9 @@ def call_vision_api(picture):
 
     return r.text
 
+
 def getStringsDiff(string1, string2):
-    return SequenceMatcher(None,string1,string2).ratio()
+    return SequenceMatcher(None, string1, string2).ratio()
 
 if __name__ == '__main__':
     print getStringsDiff(
