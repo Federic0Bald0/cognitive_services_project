@@ -1,6 +1,7 @@
 # coding: utf-8
 import json
 import requests
+import numpy as np
 from difflib import SequenceMatcher
 from base64 import b64encode
 from os.path import dirname, join
@@ -14,6 +15,7 @@ def encode_image(picture):
         enc = b64encode(img_content)
     return enc
 
+
 def call_vision_api(picture):
     request = {
             "requests": [
@@ -23,7 +25,7 @@ def call_vision_api(picture):
                 },
                 "features": [
                     {
-                    "type": "TEXT_DETECTION"
+                    "type": "DOCUMENT_TEXT_DETECTION"
                     }
                 ]
                 }
@@ -56,7 +58,45 @@ def call_vision_api(picture):
         headers={'Content-Type': 'application/json'}
         )
 
-    return r.text
+    # print type(json.dumps(extractBlocks(r.text)))
+    # print type(r.text)
+    return extractBlocks(r.text)
+    # return r.text
+
+def extractBlocks(googleJson):
+    text = ""
+    boxsizes = []
+
+    googleDict = json.loads(googleJson)
+    blocks = googleDict['responses'][0]['fullTextAnnotation']['pages'][0]['blocks']
+    for block in blocks:
+        vertices = block['boundingBox']['vertices']
+        boxsizes.append(vertices)
+        for paragraph in block['paragraphs']:            
+            words = paragraph['words']
+            for word in words:
+                symbols = word['symbols']
+                for symbol in symbols:
+                    text = text + symbol['text']
+                text = text + " "
+        text = text + '<br /> ' 
+
+    text = text + " --- "
+    
+    for boxsize in boxsizes:
+        text = text + str(getArea(boxsize)) + ', '
+
+    return text
+
+def getArea(boxsize):
+    x = np.array([])
+    y = np.array([])
+    for vertices in boxsize:
+        x = np.append(x,[vertices['x']])
+        y = np.append(y,[vertices['y']])
+
+    return 0.5*np.abs(np.dot(x,np.roll(y,1))-np.dot(y,np.roll(x,1)))
+
 
 def getStringsDiff(string1, string2):
     return SequenceMatcher(None,string1,string2).ratio()
