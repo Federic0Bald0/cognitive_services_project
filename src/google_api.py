@@ -1,7 +1,6 @@
 # coding: utf-8
 import json
 import requests
-from difflib import SequenceMatcher
 from base64 import b64encode
 from os.path import dirname, join
 
@@ -62,12 +61,3 @@ def call_vision_api(picture):
         )
 
     return r.text
-
-
-def getStringsDiff(string1, string2):
-    return SequenceMatcher(None, string1, string2).ratio()
-
-if __name__ == '__main__':
-    print getStringsDiff(
-        "Harry Potter e la pietra filosofale",
-        "Harty Potter e la pietra filosofale")
