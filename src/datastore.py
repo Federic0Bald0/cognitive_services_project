@@ -74,9 +74,9 @@ def list_books():
 # next_cursor: "pointer" to the first not downloaded entry
 # n: how many entries will be downloaded in one step
 def get_some_books(cursor=None):
-    n = 10
+    # n = 10
     query = client.query(kind='Book')
-    query_iter = query.fetch(start_cursor=cursor, limit=n)
+    query_iter = query.fetch(start_cursor=cursor)
     page = next(query_iter.pages)
 
     books = list(page)
@@ -85,11 +85,11 @@ def get_some_books(cursor=None):
     return books, next_cursor
 
 
-def search_book(generic_title):
+def search_book(generic_title, cursor=None, similarity=0, key=None):
 
-    books, next_cursor = get_some_books()
-    similarity = 0
-    most_likely = 0
+    books, next_cursor = get_some_books(cursor=cursor)
+    similarity = similarity
+    key = key
 
     for book in books:
         if book:
@@ -100,6 +100,9 @@ def search_book(generic_title):
                 similarity = ratio
                 key = book.key
 
+    if next_cursor:
+        return search_book(generic_title, next_cursor, similarity, key)
+
     return similarity, key
 
 
@@ -107,9 +110,10 @@ def get_strings_diff(string1, string2):
     return SequenceMatcher(None, string1, string2).ratio()
 
 if __name__ == '__main__':
-    add_csv()
+    # add_csv()
     # print list_books()
-    # print(search_book("Io, te e il ,Marzia Sici"))
+    # get_some_books()
+    print(search_book("Madagascar. Con mappa,Heiko Hooge,Dumont"))
 
 
 # book_key = add_book(3,
