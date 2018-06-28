@@ -29,11 +29,11 @@ def call_vision_api(picture):
                           },
                  "features": [
                     {
-                    "type": "DOCUMENT_TEXT_DETECTION"
+                      "type": "DOCUMENT_TEXT_DETECTION"
                     }
-                ]
+                             ]
                 }
-            ]
+                            ]
             }
 
     # JSON for a request with an URL ###
@@ -67,46 +67,50 @@ def call_vision_api(picture):
     return extractBlocks(r.text)
     # return r.text
 
+
 def extractBlocks(googleJson):
     text = ""
     boxsizes = []
 
     googleDict = json.loads(googleJson)
-    blocks = googleDict['responses'][0]['fullTextAnnotation']['pages'][0]['blocks']
+    blocks = googleDict['responses'][0]['fullTextAnnotation'][
+                        'pages'][0]['blocks']
     for block in blocks:
         vertices = block['boundingBox']['vertices']
         boxsizes.append(vertices)
-        for paragraph in block['paragraphs']:            
+        for paragraph in block['paragraphs']:
             words = paragraph['words']
             for word in words:
                 symbols = word['symbols']
                 for symbol in symbols:
                     text = text + symbol['text']
                 text = text + " "
-        text = text + '<br /> ' 
+        text = text + '<br /> '
 
     text = text + " --- "
-    
+
     for boxsize in boxsizes:
         text = text + str(getArea(boxsize)) + ', '
 
     return text
 
+
 def getArea(boxsize):
     x = np.array([])
     y = np.array([])
     for vertices in boxsize:
-        x = np.append(x,[vertices['x']])
-        y = np.append(y,[vertices['y']])
+        x = np.append(x, [vertices['x']])
+        y = np.append(y, [vertices['y']])
 
-    return 0.5*np.abs(np.dot(x,np.roll(y,1))-np.dot(y,np.roll(x,1)))
+    return 0.5*np.abs(np.dot(x, np.roll(y, 1))-np.dot(y, np.roll(x, 1)))
 
 
 def getStringsDiff(string1, string2):
-    return SequenceMatcher(None,string1,string2).ratio()
+    return SequenceMatcher(None, string1, string2).ratio()
 
 if __name__ == '__main__':
     print getStringsDiff(
         "Harry Potter e la pietra filosofale",
         "Harty Potter e la pietra filosofale")
-    return r.text
+
+    # return r.text ???
