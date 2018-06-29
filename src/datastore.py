@@ -113,7 +113,7 @@ if __name__ == '__main__':
     # add_csv()
     # print list_books()
     # get_some_books()
-    print(search_book("Madagascar. Con mappa,Heiko Hooge,Dumont"))
+    print(search_book("guida allo stud del proce penale paolo tonini,giuffre"))
 
 
 # book_key = add_book(3,
