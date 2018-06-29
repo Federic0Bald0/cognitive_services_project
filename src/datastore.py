@@ -4,7 +4,7 @@ from google.cloud import datastore
 from difflib import SequenceMatcher
 
 client = datastore.Client.from_service_account_json(
-                        'credentials_datastore.json')
+    'credentials_datastore.json')
 
 CSV = 'dataset/dataset.csv'
 
@@ -16,7 +16,7 @@ def add_csv():
         for (i, row) in enumerate(reader):
             # i+1 because id must not be 0
             reviews = ast.literal_eval(row[6])
-            add_book(i+1, row[0], row[1], row[3], row[4],
+            add_book(i + 1, row[0], row[1], row[3], row[4],
                      row[5], reviews, row[2])
 
 
@@ -85,7 +85,7 @@ def get_some_books(cursor=None):
     return books, next_cursor
 
 
-def search_book(generic_title, cursor=None, similarity=0, key=None):
+def search_book(generic_title, cursor=None, similarity=[0, 0], key=None):
 
     books, next_cursor = get_some_books(cursor=cursor)
     similarity = similarity
@@ -93,27 +93,64 @@ def search_book(generic_title, cursor=None, similarity=0, key=None):
 
     for book in books:
         if book:
-            to_be_matched = book.get('title') + book.get('author')
+            to_be_matched = [book.get('title'), book.get('author')]
             print to_be_matched
-            ratio = get_strings_diff(to_be_matched, generic_title)
-            if ratio > similarity:
-                similarity = ratio
+
+            best_ratios = match_blocks(to_be_matched, generic_title)
+            print best_ratios
+
+            # todo: change!!
+            if is_better(best_ratios, similarity):
+                similarity = best_ratios
                 key = book.key
 
     if next_cursor:
         return search_book(generic_title, next_cursor, similarity, key)
 
-    return similarity, key
+    # query = client.query(kind='Book')
+    # first_key = client.key(u'Book', '1006L')
+    # print first_key
+    # print 'query: ', query.key_filter(first_key, '>')
+    return similarity, client.get(key)
+
+
+def is_better(ratio1, ratio2):
+    diff_title = ratio1[0] - ratio2[0]
+    diff_author = ratio1[1] - ratio2[1]
+
+    if diff_title + diff_author > 0:
+        return True
+    else:
+        return False
+
+
+# ratio_index = 0: analyzing title
+# ratio_index = 1: analyzing author
+def match_blocks(source, detected):
+    best_ratios = [0, 0]
+    ratio_index = 0
+
+    for source_text in source:
+        for det_text in detected:
+            ratio = get_strings_diff(det_text, source_text)
+            if ratio > best_ratios[ratio_index]:
+                best_ratios[ratio_index] = ratio
+
+        ratio_index = 1
+
+    return best_ratios
 
 
 def get_strings_diff(string1, string2):
     return SequenceMatcher(None, string1, string2).ratio()
 
+
 if __name__ == '__main__':
     # add_csv()
     # print list_books()
     # get_some_books()
-    print(search_book("Madagascar. Con mappa,Heiko Hooge,Dumont"))
+    print(search_book(["The Payer".lower(),
+                       "Vi Keeland".lower(), "the player"]))
 
 
 # book_key = add_book(3,

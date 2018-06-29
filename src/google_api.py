@@ -22,19 +22,19 @@ def encode_image(picture):
 
 def call_vision_api(picture):
     request = {
-               "requests": [
-                {
-                 "image": {
+        "requests": [
+            {
+                "image": {
                     "content": encode_image(picture)
-                          },
-                 "features": [
+                },
+                "features": [
                     {
-                      "type": "DOCUMENT_TEXT_DETECTION"
+                        "type": "DOCUMENT_TEXT_DETECTION"
                     }
-                             ]
-                }
-                            ]
+                ]
             }
+        ]
+    }
 
     # JSON for a request with an URL ###
     # request = {
@@ -60,7 +60,7 @@ def call_vision_api(picture):
             .format(API_KEY),
         data=json.dumps(request),
         headers={'Content-Type': 'application/json'}
-        )
+    )
 
     # print type(json.dumps(extractBlocks(r.text)))
     # print type(r.text)
@@ -74,7 +74,7 @@ def extractBlocks(googleJson):
 
     googleDict = json.loads(googleJson)
     blocks = googleDict['responses'][0]['fullTextAnnotation'][
-                        'pages'][0]['blocks']
+        'pages'][0]['blocks']
     for block in blocks:
         vertices = block['boundingBox']['vertices']
         boxsizes.append(vertices)
@@ -102,7 +102,7 @@ def getArea(boxsize):
         x = np.append(x, [vertices['x']])
         y = np.append(y, [vertices['y']])
 
-    return 0.5*np.abs(np.dot(x, np.roll(y, 1))-np.dot(y, np.roll(x, 1)))
+    return 0.5 * np.abs(np.dot(x, np.roll(y, 1)) - np.dot(y, np.roll(x, 1)))
 
 
 def getStringsDiff(string1, string2):
@@ -112,5 +112,3 @@ if __name__ == '__main__':
     print getStringsDiff(
         "Harry Potter e la pietra filosofale",
         "Harty Potter e la pietra filosofale")
-
-    # return r.text ???
