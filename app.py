@@ -24,8 +24,8 @@ def show_result():
         f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         return render_template(
             'result.html',
-             picture=filename,
-             result=call_vision_api(filename))
+            picture=filename,
+            result=call_vision_api(filename))
 
 if __name__ == '__main__':
     app.debug = True

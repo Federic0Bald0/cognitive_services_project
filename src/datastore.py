@@ -99,7 +99,6 @@ def search_book(generic_title, cursor=None, similarity=[0, 0], key=None):
             best_ratios = match_blocks(to_be_matched, generic_title)
             print best_ratios
 
-            # todo: change!!
             if is_better(best_ratios, similarity):
                 similarity = best_ratios
                 key = book.key
@@ -114,6 +113,7 @@ def search_book(generic_title, cursor=None, similarity=[0, 0], key=None):
     return similarity, client.get(key)
 
 
+# check if the ratio1 is better than ratio2
 def is_better(ratio1, ratio2):
     diff_title = ratio1[0] - ratio2[0]
     diff_author = ratio1[1] - ratio2[1]
@@ -127,15 +127,23 @@ def is_better(ratio1, ratio2):
 # ratio_index = 0: analyzing title
 # ratio_index = 1: analyzing author
 def match_blocks(source, detected):
+    """
+    source : text coming from datastore
+    detected : text coming from vision API
+    """
     best_ratios = [0, 0]
     ratio_index = 0
 
     for source_text in source:
         for det_text in detected:
+            # check similaruty between every possible combination
+            # of string coming from source and detected
             ratio = get_strings_diff(det_text, source_text)
             if ratio > best_ratios[ratio_index]:
                 best_ratios[ratio_index] = ratio
-
+        # this is just because we assume that source hasn't
+        # length grater than 2.
+        # should be considered also editor : TODO
         ratio_index = 1
 
     return best_ratios
@@ -149,8 +157,8 @@ if __name__ == '__main__':
     # add_csv()
     # print list_books()
     # get_some_books()
-    print(search_book(["The Payer".lower(),
-                       "Vi Keeland".lower(), "the player"]))
+    print(search_book(["the police. many miles away,giovanni pollastri,sagoma",
+                       "the police", "giovanni pollastri" ]))
 
 
 # book_key = add_book(3,
