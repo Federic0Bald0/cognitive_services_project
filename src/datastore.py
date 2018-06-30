@@ -158,7 +158,7 @@ if __name__ == '__main__':
     # print list_books()
     # get_some_books()
     print(search_book(["the police. many miles away,giovanni pollastri,sagoma",
-                       "the police", "giovanni pollastri" ]))
+                       "the police", "giovanni pollastri"]))
 
 
 # book_key = add_book(3,
