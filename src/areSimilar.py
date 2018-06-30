@@ -28,7 +28,7 @@ flann = cv.FlannBasedMatcher(index_params, search_params)
 bf = cv.BFMatcher()
 
 
-def brute_force_match():
+def ORB_match():
     for query in os.listdir(queriesPath):
         for image in os.listdir(imagesPath):
 
@@ -66,7 +66,7 @@ def brute_force_match():
 
 def sift_match(matcher):
     """
-    matcher can be: bf or flann.
+    matcher can be: brute-force or flann.
     Type:
     sift_match(bf)
     sift_martch(flann)
