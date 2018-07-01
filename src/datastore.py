@@ -154,16 +154,11 @@ if __name__ == '__main__':
     # add_csv()
     # print list_books()
     # get_some_books()
-<<<<<<< Updated upstream
-    print(search_book(["the police. many miles away,giovanni pollastri,sagoma",
-                       "the police", "giovanni pollastri"]))
-=======
 
     print(search_book(["The Payer".lower(),
                        "Vi Keeland".lower(), "the player",
                        "l'amore e' un gioco pericoloso",
                        'sperling & kupfer']))
->>>>>>> Stashed changes
 
 
 # book_key = add_book(3,

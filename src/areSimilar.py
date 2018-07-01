@@ -58,7 +58,8 @@ def ORB_match():
             print 'descriptors image 1:',  len(des1)
             print 'descriptors image 2:', len(des2)
             print 'good:', len(matches)
-            print 'good percentage: ' + str(len(matches) * 100.0 / len(des1)) + '%'
+            print ('good percentage: '
+                   + str(len(matches) * 100.0 / len(des1)) + '%')
             # cv.drawMatchesKnn expects list of lists as matches.
             # img3 = cv.drawMatchesKnn(img1, kp1, img2, kp2,
             #                          good, flags=2, outImg=None)
@@ -109,7 +110,8 @@ def sift_match(matcher):
             print 'descriptors image 1:',  len(des1)
             print 'descriptors image 2:', len(des2)
             print 'good:', len(good)
-            print 'good percentage: ' + str(len(good) * 100.0 / len(des1)) + '%'
+            print ('good percentage: '
+                   + str(len(good) * 100.0 / len(des1)) + '%')
             # cv.drawMatchesKnn expects list of lists as matches.
             # img3 = cv.drawMatchesKnn(img1, kp1, img2, kp2,
             #                          good, flags=2, outImg=None)
@@ -160,15 +162,12 @@ def surf_match(matcher):
             print 'descriptors image 1:',  len(des1)
             print 'descriptors image 2:', len(des2)
             print 'good:', len(good)
-            print 'good percentage: ' + str(len(good) * 100.0 / len(des1)) + '%'
+            print ('good percentage: '
+                   + str(len(good) * 100.0 / len(des1)) + '%')
             # cv.drawMatchesKnn expects list of lists as matches.
             # img3 = cv.drawMatchesKnn(img1, kp1, img2, kp2,
             #                          good, flags=2, outImg=None)
             # plt.imshow(img3), plt.show()
-
-
-# brute_force_match()
-# sift_match(bf)
 
 
 if __name__ == '__main__':
