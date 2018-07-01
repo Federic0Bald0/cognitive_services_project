@@ -96,6 +96,7 @@ def search_book(generic_title, cursor=None, similarity=[0, 0], key=None):
             to_be_matched = [book.get('title'), book.get('author')]
             print to_be_matched
 
+            # todo: adapt for books with no title
             best_ratios = match_blocks(to_be_matched, generic_title)
             print best_ratios
 
@@ -106,10 +107,6 @@ def search_book(generic_title, cursor=None, similarity=[0, 0], key=None):
     if next_cursor:
         return search_book(generic_title, next_cursor, similarity, key)
 
-    # query = client.query(kind='Book')
-    # first_key = client.key(u'Book', '1006L')
-    # print first_key
-    # print 'query: ', query.key_filter(first_key, '>')
     return similarity, client.get(key)
 
 
@@ -157,8 +154,16 @@ if __name__ == '__main__':
     # add_csv()
     # print list_books()
     # get_some_books()
+<<<<<<< Updated upstream
     print(search_book(["the police. many miles away,giovanni pollastri,sagoma",
                        "the police", "giovanni pollastri"]))
+=======
+
+    print(search_book(["The Payer".lower(),
+                       "Vi Keeland".lower(), "the player",
+                       "l'amore e' un gioco pericoloso",
+                       'sperling & kupfer']))
+>>>>>>> Stashed changes
 
 
 # book_key = add_book(3,

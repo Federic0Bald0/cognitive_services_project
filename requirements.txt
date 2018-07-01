@@ -4,3 +4,5 @@ oauth2client
 pyasn1
 uritemplate
 google-cloud-datastore
+numpy
+opencv
