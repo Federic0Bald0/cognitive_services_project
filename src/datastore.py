@@ -2,6 +2,7 @@ import csv
 import ast
 from google.cloud import datastore
 from difflib import SequenceMatcher
+from google_api import call_vision_api
 
 client = datastore.Client.from_service_account_json(
     'credentials_datastore.json')
@@ -85,29 +86,29 @@ def get_some_books(cursor=None):
     return books, next_cursor
 
 
-def search_book(generic_title, cursor=None, similarity=[0, 0], key=None):
+def search_book(generic_title, cursor=None, similarity=[0, 0], best_book=None):
 
     books, next_cursor = get_some_books(cursor=cursor)
     similarity = similarity
-    key = key
+    best_book = best_book
 
     for book in books:
         if book:
             to_be_matched = [book.get('title'), book.get('author')]
             print to_be_matched
 
-            # todo: adapt for books with no title
             best_ratios = match_blocks(to_be_matched, generic_title)
             print best_ratios
 
             if is_better(best_ratios, similarity):
                 similarity = best_ratios
-                key = book.key
+                # key = book.key
+                best_book = book
 
     if next_cursor:
-        return search_book(generic_title, next_cursor, similarity, key)
+        return search_book(generic_title, next_cursor, similarity, best_book)
 
-    return similarity, client.get(key)
+    return similarity, best_book.get('title'), best_book.get('author')
 
 
 # check if the ratio1 is better than ratio2
@@ -150,16 +151,13 @@ def get_strings_diff(string1, string2):
     return SequenceMatcher(None, string1, string2).ratio()
 
 
-if __name__ == '__main__':
+def find_book(book_file):
     # add_csv()
     # print list_books()
     # get_some_books()
 
-    print(search_book(["The Payer".lower(),
-                       "Vi Keeland".lower(), "the player",
-                       "l'amore e' un gioco pericoloso",
-                       'sperling & kupfer']))
-
+    blocks = call_vision_api(book_file)
+    return blocks, search_book(blocks)
 
 # book_key = add_book(3,
 #                     title="Harry Potter e i doni della morte",

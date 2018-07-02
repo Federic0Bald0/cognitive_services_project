@@ -7,8 +7,19 @@
             <input type="submit" name="" value="Upload Another Picture" />
         </form>
     </div>
-    <div class="col-md-auto">
-        <pre> {{result}} </pre>
+    <div class="col-6">
+        <div class="row">
+            <p> <strong> This is what Google Vision found </strong> </p>
+            <pre> {{blocks}} </pre>
+        </div>
+        <div class="row">
+            <p> <strong> We found this book in our dataset </strong> </p>
+            <pre> {{result}} </pre>
+        </div>
+        <div class="row">
+            <p> <strong> with this similarities </strong> </p>
+            <pre> {{similarities}} </pre>
+        </div>
     </div>
 </div>
 

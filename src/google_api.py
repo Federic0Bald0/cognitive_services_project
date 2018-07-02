@@ -69,7 +69,8 @@ def call_vision_api(picture):
 
 
 def extractBlocks(googleJson):
-    text = ""
+    partial_text = ""
+    text = []
     boxsizes = []
 
     googleDict = json.loads(googleJson)
@@ -83,14 +84,15 @@ def extractBlocks(googleJson):
             for word in words:
                 symbols = word['symbols']
                 for symbol in symbols:
-                    text = text + symbol['text']
-                text = text + " "
-        text = text + '<br /> '
+                    partial_text = partial_text + symbol['text']
+                partial_text = partial_text + " "
+        text.append(partial_text.encode('utf-8').lower().strip())
+        partial_text = ""
 
-    text = text + " --- "
+    # text = text + " --- "
 
-    for boxsize in boxsizes:
-        text = text + str(getArea(boxsize)) + ', '
+    # for boxsize in boxsizes:
+    #     text = text + str(getArea(boxsize)) + ', '
 
     return text
 
@@ -107,6 +109,7 @@ def getArea(boxsize):
 
 def getStringsDiff(string1, string2):
     return SequenceMatcher(None, string1, string2).ratio()
+
 
 if __name__ == '__main__':
     print getStringsDiff(

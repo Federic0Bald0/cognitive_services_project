@@ -1,7 +1,7 @@
 # coding: utf-8
 import os
 from werkzeug import secure_filename
-from src.google_api import call_vision_api
+from src.datastore import find_book
 from flask import Flask, redirect, url_for, request, render_template
 
 app = Flask(__name__)
@@ -22,10 +22,16 @@ def show_result():
         f = request.files['pic']
         filename = secure_filename(f.filename)
         f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        book_details = find_book(filename)
         return render_template(
-                    'result.html',
-                    picture=filename,
-                    result=call_vision_api(filename))
+            'result.html',
+            picture=filename,
+            blocks=book_details[0],
+            result=('Title: ' + book_details[1][1].encode('utf-8') +
+                    ', Author: ' + book_details[1][2].encode('utf-8')),
+            similarities=book_details[1][0]
+        )
+
 
 if __name__ == '__main__':
     app.debug = True
