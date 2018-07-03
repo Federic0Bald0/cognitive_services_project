@@ -108,7 +108,8 @@ def search_book(generic_title, cursor=None, similarity=[0, 0], best_book=None):
     if next_cursor:
         return search_book(generic_title, next_cursor, similarity, best_book)
 
-    return similarity, best_book.get('title'), best_book.get('author')
+    return (similarity, best_book.get('title'),
+            best_book.get('author'), best_book.get('image'))
 
 
 # check if the ratio1 is better than ratio2

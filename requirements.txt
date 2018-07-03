@@ -6,3 +6,4 @@ uritemplate
 google-cloud-datastore
 numpy
 opencv
+scikit-image

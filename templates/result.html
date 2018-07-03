@@ -20,6 +20,21 @@
             <p> <strong> with this similarities </strong> </p>
             <pre> {{similarities}} </pre>
         </div>
+        <div class="row">
+            <p> <strong> This is the book cover stored in our dataset </strong> </p>
+        </div>
+        <div class="row">
+            <img id="dataset-pic" src="{{dataset_image_link}}" alt="Not image found" height="400">
+
+            <form action="http://localhost:5000/matches?query={{dataset_image_link}}&image={{picture}}" method="POST" enctype="multipart/form-data">
+                <input type="radio" name="tecnique" value="sift" checked> Show SIFT matches <br>
+                <!-- <input type="radio" name="tecnique" value="surf"> Show SURF matches <br> <br> -->
+
+                <!-- <input name="similarities" value="{{similarities}}" id="sim_input" /> -->
+                <input type="submit" name="submit_tecnique" value="Show Matches" />
+            </form>
+
+        </div>
     </div>
 </div>
 

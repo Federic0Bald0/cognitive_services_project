@@ -2,7 +2,9 @@
 import os
 from werkzeug import secure_filename
 from src.datastore import find_book
+from src.areSimilar import sift_match_images, bf
 from flask import Flask, redirect, url_for, request, render_template
+from skimage import io
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/pictures'
@@ -29,8 +31,40 @@ def show_result():
             blocks=book_details[0],
             result=('Title: ' + book_details[1][1].encode('utf-8') +
                     ', Author: ' + book_details[1][2].encode('utf-8')),
-            similarities=book_details[1][0]
+            similarities=book_details[1][0],
+            dataset_image_link=book_details[1][3]
         )
+
+
+@app.route('/matches', methods=['POST', 'GET'])
+def show_matches():
+    # According to which tecnique is selected, good percentage
+    # and matches image are shown
+    if request.form['tecnique'] == 'sift':
+        # Convert links into numpy array (right format for opencv)
+        query = io.imread('https:' + request.args.get('query').encode('utf-8'))
+        image = io.imread(os.path.join(app.config['UPLOAD_FOLDER'],
+                                       request.args.get('image')
+                                       .encode('utf-8')))
+        good_perc = sift_match_images(bf, query, image)
+        return render_template('matches.html',
+                               matches_image='static/matches.png',
+                               good=good_perc)
+
+
+# Added to avoid caching of the match image
+# Ugly, but seems to work
+@app.after_request
+def add_header(r):
+    """
+    Add headers to both force latest IE rendering engine or Chrome Frame,
+    and also to cache the rendered page for 10 minutes.
+    """
+    r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    r.headers["Pragma"] = "no-cache"
+    r.headers["Expires"] = "0"
+    r.headers['Cache-Control'] = 'public, max-age=0'
+    return r
 
 
 if __name__ == '__main__':

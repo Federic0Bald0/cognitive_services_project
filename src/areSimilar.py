@@ -58,8 +58,8 @@ def ORB_match():
             print 'descriptors image 1:',  len(des1)
             print 'descriptors image 2:', len(des2)
             print 'good:', len(matches)
-            print ('good percentage: '
-                   + str(len(matches) * 100.0 / len(des1)) + '%')
+            print('good percentage: '
+                  + str(len(matches) * 100.0 / len(des1)) + '%')
             # cv.drawMatchesKnn expects list of lists as matches.
             # img3 = cv.drawMatchesKnn(img1, kp1, img2, kp2,
             #                          good, flags=2, outImg=None)
@@ -76,11 +76,6 @@ def sift_match(matcher):
 
     for query in os.listdir(queriesPath):
         for image in os.listdir(imagesPath):
-
-            # query     = 'GEB.jpg'
-            # query     = 'GoT3.jpg'
-            # image     = 'GoT3_1.jpg'
-            # image     = 'GEB_bad.jpg'
 
             queryPath = queriesPath + query
             imagePath = imagesPath + image
@@ -110,8 +105,8 @@ def sift_match(matcher):
             print 'descriptors image 1:',  len(des1)
             print 'descriptors image 2:', len(des2)
             print 'good:', len(good)
-            print ('good percentage: '
-                   + str(len(good) * 100.0 / len(des1)) + '%')
+            print('good percentage: '
+                  + str(len(good) * 100.0 / len(des1)) + '%')
             # cv.drawMatchesKnn expects list of lists as matches.
             # img3 = cv.drawMatchesKnn(img1, kp1, img2, kp2,
             #                          good, flags=2, outImg=None)
@@ -128,11 +123,6 @@ def surf_match(matcher):
 
     for query in os.listdir(queriesPath):
         for image in os.listdir(imagesPath):
-
-            # query     = 'GEB.jpg'
-            # query     = 'GoT3.jpg'
-            # image     = 'GoT3_1.jpg'
-            # image     = 'GEB_bad.jpg'
 
             queryPath = queriesPath + query
             imagePath = imagesPath + image
@@ -162,12 +152,59 @@ def surf_match(matcher):
             print 'descriptors image 1:',  len(des1)
             print 'descriptors image 2:', len(des2)
             print 'good:', len(good)
-            print ('good percentage: '
-                   + str(len(good) * 100.0 / len(des1)) + '%')
+            print('good percentage: '
+                  + str(len(good) * 100.0 / len(des1)) + '%')
             # cv.drawMatchesKnn expects list of lists as matches.
             # img3 = cv.drawMatchesKnn(img1, kp1, img2, kp2,
             #                          good, flags=2, outImg=None)
             # plt.imshow(img3), plt.show()
+
+
+# function to compare 2 specific images
+def sift_match_images(matcher, query, image):
+
+    # The following lines are commented because
+    # these steps are done in app.py with skimage
+
+    # queryPath = queriesPath + query
+    # imagePath = imagesPath + image
+
+    # img1 = cv.imread(queryPath, 0)          # queryImage
+    # img2 = cv.imread(imagePath, 0)          # trainImage
+
+    # Initiate SIFT detector
+    sift = cv.xfeatures2d.SIFT_create()
+    # find the keypoints and descriptors with sift
+    kp1, des1 = sift.detectAndCompute(query, None)
+    kp2, des2 = sift.detectAndCompute(image, None)
+    # BFMatcher with default params
+    matches = matcher.knnMatch(des1, des2, k=2)
+    # Apply ratio test
+    good = []
+
+    for m, n in matches:
+        if m.distance < distance_coef * n.distance:
+            good.append([m])
+
+    print
+    print '***********'
+    print 'query:', query
+    print 'image:', image
+    print
+
+    print 'descriptors image 1:',  len(des1)
+    print 'descriptors image 2:', len(des2)
+    print 'good:', len(good)
+    print('good percentage: '
+          + str(len(good) * 100.0 / len(des1)) + '%')
+    # cv.drawMatchesKnn expects list of lists as matches.
+    img3 = cv.drawMatchesKnn(query, kp1, image, kp2,
+                             good, flags=2, outImg=None)
+    plt.imshow(img3), plt.savefig('static/matches.png')  # , plt.show()
+    return len(good) * 100.0 / len(des1)
+
+
+# sift_match_images(bf, 'the_player.jpg', 'The_Player.jpg')
 
 
 if __name__ == '__main__':
