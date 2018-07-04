@@ -24,8 +24,7 @@
         </div>
         <div class="row">
             <img id="dataset-pic" src="{{dataset_image_link}}" alt="Not image found" height="400">
-
-            <form action="http://localhost:5000/matches?query={{dataset_image_link}}&image={{picture}}" method="POST" enctype="multipart/form-data">
+            <form action="http://localhost:5000/matches?query={{dataset_image_link}}&local={{local}}&image={{picture}}" method="POST" enctype="multipart/form-data">
                 <input type="radio" name="tecnique" value="sift" checked> Show SIFT matches <br>
                 <!-- <input type="radio" name="tecnique" value="surf"> Show SURF matches <br> <br> -->
 

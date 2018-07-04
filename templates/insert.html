@@ -10,7 +10,7 @@
     <div class="col-md-auto">
             <img id="inputpic" src="/static/pictures/{{picture}}" alt="error" height="500">
     </div>
-    <form action="http://localhost:5000/insert" method = "POST" enctype="multipart/form-data">
+    <form action="http://localhost:5000/insert?picture={{picture}}" method = "POST" enctype="multipart/form-data">
         <div class="form-group">
             <label for="title">Title</label>
             <input type="text"  placeholder="Enter Title" class="form-control" name="title" id="title">

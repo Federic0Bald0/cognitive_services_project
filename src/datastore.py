@@ -20,8 +20,8 @@ def add_csv():
                      row[5], reviews, row[2])
 
 
-def add_book(title, author, image, rating=None,
-             price=None, reviews=None, editor=None, descriptions=None):
+def add_book(title, author, image, rating=None, price=None,
+             reviews=None, editor=None, local=False):
 
     key = client.key('Book')
     book = datastore.Entity(
@@ -34,7 +34,7 @@ def add_book(title, author, image, rating=None,
         'editor': editor,
         'rating': rating,
         'price': price,
-        'descriptions': descriptions
+        'local': local,
     })
     client.put(book)
 
@@ -101,14 +101,12 @@ def search_book(generic_title, cursor=None, similarity=[0, 0], best_book=None):
 
             if is_better(best_ratios, similarity):
                 similarity = best_ratios
-                # key = book.key
                 best_book = book
 
     if next_cursor:
         return search_book(generic_title, next_cursor, similarity, best_book)
 
-    return (similarity, best_book.get('title'),
-            best_book.get('author'), best_book.get('image'))
+    return (similarity, best_book)
 
 
 # check if the ratio1 is better than ratio2
