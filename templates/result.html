@@ -1,13 +1,12 @@
 {% include 'base/startblock.html' %}
 
-<div class="row">
+<div class="container">
     <div class="col-md-auto">
         <img id="inputpic" src="/static/pictures/{{picture}}" alt="error" height="500">
         <form action="http://localhost:5000" method="GET" enctype = "multipart/form-data">
             <input type="submit" name="" value="Upload Another Picture" />
         </form>
     </div>
-    <div class="col-6">
         <div class="row">
             <p> <strong> This is what Google Vision found </strong> </p>
             <pre> {{blocks}} </pre>
@@ -36,6 +35,4 @@
 
         </div>
     </div>
-</div>
-
 {% include 'base/endblock.html' %}

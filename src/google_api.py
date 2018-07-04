@@ -29,7 +29,7 @@ def call_vision_api(picture):
                 },
                 "features": [
                     {
-                        "type": "DOCUMENT_TEXT_DETECTION"
+                        "type": "TEXT_DETECTION"
                     }
                 ]
             }
@@ -110,8 +110,3 @@ def getArea(boxsize):
 def getStringsDiff(string1, string2):
     return SequenceMatcher(None, string1, string2).ratio()
 
-
-if __name__ == '__main__':
-    print getStringsDiff(
-        "Harry Potter e la pietra filosofale",
-        "Harty Potter e la pietra filosofale")

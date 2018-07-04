@@ -1,12 +1,13 @@
 # coding: utf-8
 import os
 from werkzeug import secure_filename
-from src.datastore import find_book
+from src.datastore import find_book, add_book
 from src.areSimilar import sift_match_images, bf
-from flask import Flask, redirect, url_for, request, render_template
+from flask import Flask, redirect, url_for, request, render_template, flash
 from skimage import io
 
 app = Flask(__name__)
+app.secret_key = 'vogliamo30elode'
 app.config['UPLOAD_FOLDER'] = 'static/pictures'
 
 
@@ -25,6 +26,11 @@ def show_result():
         filename = secure_filename(f.filename)
         f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         book_details = find_book(filename)
+        if book_details[1][1] < 0.5 or book_details[1][2] > 0.5:
+            flash('The book is not available in our database, \
+                   would you like to enrich our application adding \
+                   this book ?')
+            return render_template('insert.html', picture=filename)
         return render_template(
             'result.html',
             picture=filename,
@@ -50,6 +56,36 @@ def show_matches():
         return render_template('matches.html',
                                matches_image='static/matches.png',
                                good=good_perc)
+
+
+@app.route('/insert', methods=['POST', 'GET'])
+def add_new_book():
+    # add new book to database
+    if request.method == 'POST':
+
+        title = request.form['title']
+        if not title:
+            flash('You must insert a Title')
+            return render_template('insert.html')
+        author = request.form['author']
+        if not author:
+            flash('You must insert a Author')
+            return render_template('insert.html')
+        editor = request.form['editor']
+        rating = int(request.form['rating'])
+        if rating < 1 or rating > 5:
+            flash('Rating must be number between 1 and 5')
+            return render_template('insert.html')
+        price = request.form['price']
+        review = request.form['review']
+        if len(review) > 1500:
+            flash('You exceeded the limit of 1500 characters in the review')
+            return render_template('insert.html')
+        image = ''
+        # add_book(title, author, image, rating,
+        #          price, [review], editor)
+        flash('New book succesfully inserted')
+        return render_template('home.html')
 
 
 # Added to avoid caching of the match image

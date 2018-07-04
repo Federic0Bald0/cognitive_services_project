@@ -1,8 +1,9 @@
 import os
-import numpy as np
-import cv2 as cv
-from matplotlib import pyplot as plt
 import sys
+import cv2 as cv
+import numpy as np
+from matplotlib import pyplot as plt
+
 
 # TODO: decide the pair (distance_coef,good_percentage) to establish if
 # the two images contain the same book: at the moment (0,9,35%),
@@ -17,7 +18,7 @@ import sys
 queriesPath = 'src/Book_Covers/Query/'
 imagesPath = 'src/Book_Covers/Images/'
 
-distance_coef = 0.90                    # before the value was 0.75
+distance_coef = 0.95                    # before the value was 0.75
 
 # FLANN matcher
 FLANN_INDEX_KDTREE = 1
@@ -58,8 +59,8 @@ def ORB_match():
             print 'descriptors image 1:',  len(des1)
             print 'descriptors image 2:', len(des2)
             print 'good:', len(matches)
-            print('good percentage: '
-                  + str(len(matches) * 100.0 / len(des1)) + '%')
+            print('good percentage: ' +
+                  str(len(matches) * 100.0 / len(des1)) + '%')
             # cv.drawMatchesKnn expects list of lists as matches.
             # img3 = cv.drawMatchesKnn(img1, kp1, img2, kp2,
             #                          good, flags=2, outImg=None)
@@ -72,7 +73,7 @@ def sift_match(matcher):
     Type:
     sift_match(bf)
     sift_martch(flann)
-    """             # before the value was 0.75
+    """
 
     for query in os.listdir(queriesPath):
         for image in os.listdir(imagesPath):
@@ -105,8 +106,8 @@ def sift_match(matcher):
             print 'descriptors image 1:',  len(des1)
             print 'descriptors image 2:', len(des2)
             print 'good:', len(good)
-            print('good percentage: '
-                  + str(len(good) * 100.0 / len(des1)) + '%')
+            print('good percentage: ' +
+                  str(len(good) * 100.0 / len(des1)) + '%')
             # cv.drawMatchesKnn expects list of lists as matches.
             # img3 = cv.drawMatchesKnn(img1, kp1, img2, kp2,
             #                          good, flags=2, outImg=None)
@@ -119,7 +120,7 @@ def surf_match(matcher):
     Type:
     sift_match(bf)
     sift_martch(flann)
-    """             # before the value was 0.75
+    """
 
     for query in os.listdir(queriesPath):
         for image in os.listdir(imagesPath):
@@ -152,8 +153,8 @@ def surf_match(matcher):
             print 'descriptors image 1:',  len(des1)
             print 'descriptors image 2:', len(des2)
             print 'good:', len(good)
-            print('good percentage: '
-                  + str(len(good) * 100.0 / len(des1)) + '%')
+            print('good percentage: ' +
+                  str(len(good) * 100.0 / len(des1)) + '%')
             # cv.drawMatchesKnn expects list of lists as matches.
             # img3 = cv.drawMatchesKnn(img1, kp1, img2, kp2,
             #                          good, flags=2, outImg=None)
@@ -195,16 +196,13 @@ def sift_match_images(matcher, query, image):
     print 'descriptors image 1:',  len(des1)
     print 'descriptors image 2:', len(des2)
     print 'good:', len(good)
-    print('good percentage: '
-          + str(len(good) * 100.0 / len(des1)) + '%')
+    print('good percentage: ' +
+          str(len(good) * 100.0 / len(des1)) + '%')
     # cv.drawMatchesKnn expects list of lists as matches.
     img3 = cv.drawMatchesKnn(query, kp1, image, kp2,
                              good, flags=2, outImg=None)
     plt.imshow(img3), plt.savefig('static/matches.png')  # , plt.show()
     return len(good) * 100.0 / len(des1)
-
-
-# sift_match_images(bf, 'the_player.jpg', 'The_Player.jpg')
 
 
 if __name__ == '__main__':

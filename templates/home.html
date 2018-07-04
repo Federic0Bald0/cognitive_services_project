@@ -1,13 +1,19 @@
 {% include 'base/startblock.html' %}
-
+{% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+{% endwith %}
     <form action = "http://localhost:5000/result" method = "POST" enctype = "multipart/form-data">
         <input type = "file" name = "pic" accept="image/*" onchange="readURL(this);" />
 
          <input type = "submit"/>
     </form>
-      
+
     <img id="inputpic" src="#" alt=""/>
-	
+
     <script type="text/javascript">
 		function readURL(input) {
         	if (input.files && input.files[0]) {

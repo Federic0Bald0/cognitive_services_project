@@ -14,20 +14,18 @@ def add_csv():
     with open(CSV) as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         header = next(reader, None)
-        for (i, row) in enumerate(reader):
-            # i+1 because id must not be 0
+        for row in reader:
             reviews = ast.literal_eval(row[6])
-            add_book(i + 1, row[0], row[1], row[3], row[4],
+            add_book(row[0], row[1], row[3], row[4],
                      row[5], reviews, row[2])
 
 
-def add_book(book_id, title, author, image, rating, price,
-             reviews, editor, descriptions=None):
+def add_book(title, author, image, rating=None,
+             price=None, reviews=None, editor=None, descriptions=None):
 
-    key = client.key('Book', book_id)
+    key = client.key('Book')
     book = datastore.Entity(
         key, exclude_from_indexes=['description'])
-    # print book
 
     book.update({
         'title': title,
@@ -38,12 +36,13 @@ def add_book(book_id, title, author, image, rating, price,
         'price': price,
         'descriptions': descriptions
     })
+    client.put(book)
+
     for review in reviews:
         # only reviews with less then 1500 char are allowed
         if len(review) < 1500:
-            add_review(key, review)
+            add_review(book.key, review)
 
-    client.put(book)
     return book.key
 
 
@@ -74,10 +73,10 @@ def list_books():
 
 # next_cursor: "pointer" to the first not downloaded entry
 # n: how many entries will be downloaded in one step
-def get_some_books(cursor=None):
-    # n = 10
+def get_some_books(cursor=None, limit=None):
+
     query = client.query(kind='Book')
-    query_iter = query.fetch(start_cursor=cursor)
+    query_iter = query.fetch(start_cursor=cursor, limit=limit)
     page = next(query_iter.pages)
 
     books = list(page)
@@ -153,22 +152,6 @@ def get_strings_diff(string1, string2):
 
 
 def find_book(book_file):
-    # add_csv()
-    # print list_books()
-    # get_some_books()
 
     blocks = call_vision_api(book_file)
     return blocks, search_book(blocks)
-
-# book_key = add_book(3,
-#                     title="Harry Potter e i doni della morte",
-#                     author="J. K. Rowling",
-#                     image="this is a placeholder",
-#                     )
-
-# books, next_cursor = get_some_books()
-# print books
-# books, _ = get_some_books(next_cursor)
-# print books
-
-# delete_book(book_key)
