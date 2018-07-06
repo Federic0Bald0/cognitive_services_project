@@ -106,7 +106,13 @@ def search_book(generic_title, cursor=None, similarity=[0, 0], best_book=None):
     if next_cursor:
         return search_book(generic_title, next_cursor, similarity, best_book)
 
+# <<<<<<< Updated upstream
     return (similarity, best_book)
+# =======
+#     return (similarity, best_book.get('title'),
+#             best_book.get('author'), best_book.get('image'),
+#             best_book.get('local'))
+# >>>>>>> Stashed changes
 
 
 # check if the ratio1 is better than ratio2
@@ -114,7 +120,7 @@ def is_better(ratio1, ratio2):
     diff_title = ratio1[0] - ratio2[0]
     diff_author = ratio1[1] - ratio2[1]
 
-    if diff_title + diff_author > 0:
+    if diff_title + diff_author >= 0:
         return True
     else:
         return False
@@ -149,7 +155,24 @@ def get_strings_diff(string1, string2):
     return SequenceMatcher(None, string1, string2).ratio()
 
 
-def find_book(book_file):
+def find_book(book_file, useBlocks=True):
 
-    blocks = call_vision_api(book_file)
+    blocks = call_vision_api(book_file, useBlocks)
     return blocks, search_book(blocks)
+
+# book_key = add_book(3,
+#                     title="Harry Potter e i doni della morte",
+#                     author="J. K. Rowling",
+#                     image="this is a placeholder",
+#                     )
+
+# books, next_cursor = get_some_books()
+# print books
+# books, _ = get_some_books(next_cursor)
+# print books
+
+# delete_book(book_key)
+
+
+if __name__ == '__main__':
+    print call_vision_api('IMAGE_2018-07-04_100013.jpg', useBlocks=True)

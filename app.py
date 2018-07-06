@@ -26,12 +26,21 @@ def show_result():
         filename = secure_filename(f.filename)
         f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         book_details = find_book(filename)
+
         # temporary threshold for match
         if book_details[1][0][0] < 0.5 or book_details[1][0][1] < 0.5:
-            flash('The book is not available in our database, \
-                   would you like to enrich our application adding \
-                   this book ?')
-            return render_template('insert.html', picture=filename)
+
+            # retry using lines instead of blocks
+            # ugly.. it should be better to save the google json
+            book_details = find_book(filename, useBlocks=False)
+
+            if book_details[1][0][0] < 0.5 or book_details[1][0][1] < 0.5:
+
+                flash('The book is not available in our database, \
+                       would you like to enrich our application adding \
+                       this book ?')
+                return render_template('insert.html', picture=filename)
+
         return render_template(
             'result.html',
             picture=filename,
@@ -43,7 +52,7 @@ def show_result():
             similarities=book_details[1][0],
             dataset_image_link=book_details[1][1].get('image'),
             local=book_details[1][1].get('local')
-            )
+        )
 
 
 @app.route('/matches', methods=['POST', 'GET'])
@@ -51,6 +60,7 @@ def show_matches():
     # According to which tecnique is selected, good percentage
     # and matches image are shown
     if request.form['tecnique'] == 'sift':
+        # << << << < Updated upstream
         # if the image is stored locally
         if request.args.get('local'):
             query = io.imread(request.args.get('query').encode('utf-8'))
@@ -58,13 +68,24 @@ def show_matches():
             # Convert links into numpy array (right format for opencv)
             query = io.imread('https:' + request.args.get('query')
                               .encode('utf-8'))
-        image = io.imread(os.path.join(app.config['UPLOAD_FOLDER'],
-                                       request.args.get('image')
-                                       .encode('utf-8')))
-        good_perc = sift_match_images(bf, query, image)
-        return render_template('matches.html',
-                               matches_image='static/matches.png',
-                               good=good_perc)
+# == == == =
+#     query = []
+#     if request.args.get('local') == 'false':
+#         # Convert links into numpy array (right format for opencv)
+#         query = io.imread('https:' + request.args.get('query')
+#                           .encode('utf-8'))
+#     else:
+#         query = io.imread(request.args.get('query')
+#                           .encode('utf-8'))
+
+# >>>>>> > Stashed changes
+    image = io.imread(os.path.join(app.config['UPLOAD_FOLDER'],
+                                   request.args.get('image')
+                                   .encode('utf-8')))
+    good_perc = sift_match_images(bf, query, image)
+    return render_template('matches.html',
+                           matches_image='static/matches.png',
+                           good=good_perc)
 
 
 @app.route('/insert', methods=['POST', 'GET'])

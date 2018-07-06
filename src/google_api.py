@@ -20,7 +20,7 @@ def encode_image(picture):
     return enc
 
 
-def call_vision_api(picture):
+def call_vision_api(picture, useBlocks=True):
     request = {
         "requests": [
             {
@@ -29,7 +29,7 @@ def call_vision_api(picture):
                 },
                 "features": [
                     {
-                        "type": "TEXT_DETECTION"
+                        "type": "DOCUMENT_TEXT_DETECTION"
                     }
                 ]
             }
@@ -64,7 +64,10 @@ def call_vision_api(picture):
 
     # print type(json.dumps(extractBlocks(r.text)))
     # print type(r.text)
-    return extractBlocks(r.text)
+    if useBlocks:
+        return extractBlocks(r.text)
+    else:
+        return extractLines(r.text)
     # return r.text
 
 
@@ -97,6 +100,37 @@ def extractBlocks(googleJson):
     return text
 
 
+def extractLines(googleJson):
+    partial_text = ""
+    text = []
+
+    googleDict = json.loads(googleJson)
+    blocks = googleDict['responses'][0]['fullTextAnnotation'][
+        'pages'][0]['blocks']
+    for block in blocks:
+        for paragraph in block['paragraphs']:
+            words = paragraph['words']
+            for word in words:
+                symbols = word['symbols']
+                for symbol in symbols:
+                    partial_text = partial_text + symbol['text']
+                    if (symbol.get('property') and
+                            symbol['property'].get('detectedBreak')):
+
+                        detectedBreak = symbol['property']['detectedBreak']
+
+                        if (detectedBreak['type'] == 'LINE_BREAK' or
+                                detectedBreak['type'] == 'EOL_SURE_SPACE'):
+
+                            text.append(partial_text.encode('utf-8').lower()
+                                        .strip())
+
+                            partial_text = ""
+                partial_text = partial_text + " "
+
+    return text
+
+
 def getArea(boxsize):
     x = np.array([])
     y = np.array([])
@@ -109,4 +143,3 @@ def getArea(boxsize):
 
 def getStringsDiff(string1, string2):
     return SequenceMatcher(None, string1, string2).ratio()
-
