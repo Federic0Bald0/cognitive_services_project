@@ -94,10 +94,10 @@ def search_book(generic_title, cursor=None, similarity=[0, 0], best_book=None):
     for book in books:
         if book:
             to_be_matched = [book.get('title'), book.get('author')]
-            print to_be_matched
+            # print to_be_matched
 
             best_ratios = match_blocks(to_be_matched, generic_title)
-            print best_ratios
+            # print best_ratios
 
             if is_better(best_ratios, similarity):
                 similarity = best_ratios
@@ -155,9 +155,9 @@ def get_strings_diff(string1, string2):
     return SequenceMatcher(None, string1, string2).ratio()
 
 
-def find_book(book_file, useBlocks=True):
+def find_book(book_file):
 
-    blocks = call_vision_api(book_file, useBlocks)
+    blocks = call_vision_api(book_file)
     return blocks, search_book(blocks)
 
 # book_key = add_book(3,
@@ -175,4 +175,4 @@ def find_book(book_file, useBlocks=True):
 
 
 if __name__ == '__main__':
-    print call_vision_api('IMAGE_2018-07-04_100013.jpg', useBlocks=True)
+    print call_vision_api('IMAGE_2018-07-04_100013.jpg')

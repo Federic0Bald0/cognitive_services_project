@@ -12,6 +12,15 @@ data = json.loads(json_data)
 API_KEY = data['api_key']
 PATH_IMAGES = 'static/pictures/'
 
+googleJson = ""
+
+
+# used to set the json to empty string
+# when the right book has been found with blocks
+def blocks_were_enough():
+    global googleJson
+    googleJson = ""
+
 
 def encode_image(picture):
     with open(PATH_IMAGES + picture, 'rb') as img:
@@ -55,19 +64,29 @@ def call_vision_api(picture, useBlocks=True):
     #         ]
     #     }
 
-    r = requests.post(
-        url='https://vision.googleapis.com/v1/images:annotate?key={}'
-            .format(API_KEY),
-        data=json.dumps(request),
-        headers={'Content-Type': 'application/json'}
-    )
+    global googleJson
+
+    # if this is the first try
+    if not googleJson:
+        r = requests.post(
+            url='https://vision.googleapis.com/v1/images:annotate?key={}'
+                .format(API_KEY),
+            data=json.dumps(request),
+            headers={'Content-Type': 'application/json'}
+
+        )
+        googleJson = r.text
+        print "Trying blocks"
+        return extractBlocks(googleJson)
+    else:
+        lines = extractLines(googleJson)
+        # next time retry with blocks
+        googleJson = ""
+        print "trying lines"
+        return lines
 
     # print type(json.dumps(extractBlocks(r.text)))
-    # print type(r.text)
-    if useBlocks:
-        return extractBlocks(r.text)
-    else:
-        return extractLines(r.text)
+    # print type(r.text))
     # return r.text
 
 

@@ -2,6 +2,7 @@
 import os
 from werkzeug import secure_filename
 from src.datastore import find_book, add_book
+from src.google_api import blocks_were_enough
 from src.areSimilar import sift_match_images, bf
 from flask import Flask, redirect, url_for, request, render_template, flash
 from skimage import io
@@ -30,9 +31,9 @@ def show_result():
         # temporary threshold for match
         if book_details[1][0][0] < 0.5 or book_details[1][0][1] < 0.5:
 
-            # retry using lines instead of blocks
-            # ugly.. it should be better to save the google json
-            book_details = find_book(filename, useBlocks=False)
+            # retry for the second time
+            # lines will be used instead of blocks
+            book_details = find_book(filename)
 
             if book_details[1][0][0] < 0.5 or book_details[1][0][1] < 0.5:
 
@@ -40,6 +41,8 @@ def show_result():
                        would you like to enrich our application adding \
                        this book ?')
                 return render_template('insert.html', picture=filename)
+        else:
+            blocks_were_enough()
 
         return render_template(
             'result.html',
