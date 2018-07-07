@@ -1,9 +1,9 @@
 # coding: utf-8
 import os
 from werkzeug import secure_filename
-from src.datastore import find_book, add_book
 from src.google_api import blocks_were_enough
 from src.areSimilar import sift_match_images, bf
+from src.datastore import find_book, add_book, get_reviews, add_review, client
 from flask import Flask, redirect, url_for, request, render_template, flash
 from skimage import io
 
@@ -43,19 +43,39 @@ def show_result():
                 return render_template('insert.html', picture=filename)
         else:
             blocks_were_enough()
-
+            id = book_details[1][1].key.id
+            print(type(id))
+            key = client.key('Book', id)
+            print key
+            reviews = get_reviews(key)
+            reviews = [review.get('review').decode('utf-8')
+                       for review in reviews]
+            print reviews
         return render_template(
             'result.html',
             picture=filename,
             blocks=book_details[0],
+            book_id=id,
             result=('Title: ' +
                     book_details[1][1].get('title').encode('utf-8') +
                     ', Author: ' +
                     book_details[1][1].get('author').encode('utf-8')),
             similarities=book_details[1][0],
             dataset_image_link=book_details[1][1].get('image'),
-            local=book_details[1][1].get('local')
+            local=book_details[1][1].get('local'),
+            reviews=reviews
         )
+
+
+@app.route('/comment', methods=['POST'])
+def store_comment():
+    review = request.form['review']
+    book_id = request.args.get('book_id')
+    book_key = client.key('Book', long(book_id))
+    key = add_review(book_key, review.encode('utf-8'))
+    flash('Thank you, your comment is really valuable\
+          us')
+    return render_template('home.html')
 
 
 @app.route('/matches', methods=['POST', 'GET'])

@@ -85,6 +85,15 @@ def get_some_books(cursor=None, limit=None):
     return books, next_cursor
 
 
+def get_reviews(book_id):
+
+    query = client.query(kind='Review')
+    query.add_filter('book_key', '=', book_id)
+    results = list(query.fetch())
+
+    return results
+
+
 def search_book(generic_title, cursor=None, similarity=[0, 0], best_book=None):
 
     books, next_cursor = get_some_books(cursor=cursor)
