@@ -42,7 +42,14 @@ def show_result():
                        this book ?')
                 return render_template('insert.html', picture=filename)
         else:
-            blocks_were_enough()
+            # let's see if lines obtain a better result than blocks
+            book_details_lines = find_book(filename)
+            if ((book_details_lines[1][0][0] - book_details[1][0][0]) +
+                    (book_details_lines[1][0][1] - book_details[1][0][1]) > 0):
+                # if similarities founded by lines are better,
+                # consider them instead of blocks
+                book_details = book_details_lines
+                # blocks_were_enough()
 
         return render_template(
             'result.html',
@@ -65,7 +72,8 @@ def show_matches():
     if request.form['tecnique'] == 'sift':
         # << << << < Updated upstream
         # if the image is stored locally
-        if request.args.get('local'):
+        print 'aaaaaaaaaaaa' + request.args.get('local')
+        if request.args.get('local') == "True":
             query = io.imread(request.args.get('query').encode('utf-8'))
         else:
             # Convert links into numpy array (right format for opencv)
