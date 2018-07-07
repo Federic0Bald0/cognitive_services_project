@@ -1,7 +1,7 @@
 {% include 'base/startblock.html' %}
 
 <div class="container">
-    <div class="col-md-auto">
+    <div class="row">
         <img id="inputpic" src="/static/pictures/{{picture}}" alt="error" height="500">
         <form action="http://localhost:5000" method="GET" enctype = "multipart/form-data">
             <input type="submit" name="" value="Upload Another Picture" />
@@ -31,21 +31,31 @@
                 <!-- <input name="similarities" value="{{similarities}}" id="sim_input" /> -->
                 <input type="submit" name="submit_tecnique" value="Show Matches" />
             </form>
-
         </div>
-        <div class="container" >
-            <h6> Comments </h6>
-        </div>
-        <form action="http://localhost:5000/comment?book_id={{book_id}}" method = "POST" enctype="multipart/form-data">
-            <div class="form-group">
-                <input type="text"  placeholder="Enter your comment (max 1500 characters)" class="form-control" name="review">
+        <div class="row" >
+                <div class="row">
+                <h4> Comments </h4>
+                <div class="panel panel-default">
+                <div class="panel-body">
+                    <form action="http://localhost:5000/comment?book_id={{book_id}}" method = "POST" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <input type="text"  placeholder="Enter your comment (max 1500 characters)" class="form-control" name="review">
+                        </div>
+                        <input type = "submit"/>
+                    </form>
+                </div>
+                </div>
+                </div>
+                {% for review in reviews %}
+                    <div class="row">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                {{ review }}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
-            <input type = "submit"/>
-        </form>
-        {% for review in reviews %}
-            <div class="row">
-                {{ review }}
-            </div>
-        {% endfor %}
     </div>
+
 {% include 'base/endblock.html' %}

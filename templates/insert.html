@@ -7,6 +7,8 @@
       {% endif %}
 {% endwith %}
 <div class="container">
+    <div class="panel panel-default">
+    <div class="panel-body">
     <div class="col-md-auto">
             <img id="inputpic" src="/static/pictures/{{picture}}" alt="error" height="500">
     </div>
@@ -38,5 +40,7 @@
         <p>Fields with * are optional</p>
         <input type = "submit"/>
     </form>
+</div>
+</div>
 </div>
 {% include 'base/endblock.html' %}

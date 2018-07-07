@@ -42,17 +42,6 @@ def show_result():
                        this book ?')
                 return render_template('insert.html', picture=filename)
         else:
-<<<<<<< HEAD
-            blocks_were_enough()
-            id = book_details[1][1].key.id
-            print(type(id))
-            key = client.key('Book', id)
-            print key
-            reviews = get_reviews(key)
-            reviews = [review.get('review').decode('utf-8')
-                       for review in reviews]
-            print reviews
-=======
             # let's see if lines obtain a better result than blocks
             book_details_lines = find_book(filename)
             if ((book_details_lines[1][0][0] - book_details[1][0][0]) +
@@ -61,8 +50,11 @@ def show_result():
                 # consider them instead of blocks
                 book_details = book_details_lines
                 # blocks_were_enough()
-
->>>>>>> 739da2997180d8c877e7ed624a44f099d336694f
+            id = book_details[1][1].key.id
+            key = client.key('Book', id)
+            reviews = get_reviews(key)
+            reviews = [review.get('review').decode('utf-8')
+                       for review in reviews]
         return render_template(
             'result.html',
             picture=filename,
@@ -82,6 +74,12 @@ def show_result():
 @app.route('/comment', methods=['POST'])
 def store_comment():
     review = request.form['review']
+    if len(review) > 1500:
+        flash('Your comment is too long')
+        render_template('home.html')
+    if len(review) == 0:
+        flash("You didn't type anything")
+        render_template('home.html')
     book_id = request.args.get('book_id')
     book_key = client.key('Book', long(book_id))
     key = add_review(book_key, review.encode('utf-8'))
