@@ -23,7 +23,7 @@ def add_csv():
 
 # add a single book
 def add_book(title, author, image, rating=None, price=None,
-             reviews=None, editor=None, local=False):
+             reviews=None, editor=None):
 
     key = client.key('Book')
     book = datastore.Entity(
@@ -35,8 +35,7 @@ def add_book(title, author, image, rating=None, price=None,
         'image': image,
         'editor': editor,
         'rating': rating,
-        'price': price,
-        'local': local,
+        'price': price
     })
     client.put(book)
 

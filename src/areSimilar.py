@@ -162,14 +162,9 @@ def surf_match(matcher):
             # plt.imshow(img3), plt.show()
 
 
-# function to compare 2 specific images
-def sift_match_images(matcher, query_path, image_path, local):
-    if local:
-        query = io.imread(query_path.encode('utf-8'))
-    else:
-        # Convert links into numpy array (right format for opencv)
-        query = io.imread('https:' + query_path.encode('utf-8'))
-
+# function to compare 2 images
+def sift_match_images(matcher, query_path, image_path):
+    query = io.imread(query_path.encode('utf-8'))
     image = io.imread(os.path.join('static/pictures',
                                    image_path.encode('utf-8')))
 

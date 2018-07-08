@@ -30,15 +30,13 @@ def show_result():
         book = book_details[1][1]
         good_perc = sift_match_images(flann,
                                       book.get('image'),
-                                      filename,
-                                      book.get('local'))
+                                      filename)
         # LINE SEARCH
         book_details_lines = find_book(filename)
         book_lines = book_details_lines[1][1]
         good_perc_lines = sift_match_images(flann,
                                             book_lines.get('image'),
-                                            filename,
-                                            book_lines.get('local'))
+                                            filename)
 
         # temporary threshold for match
         if (book_details[1][0][0] > 0.5 and
@@ -79,7 +77,6 @@ def show_result():
                     book.get('author').encode('utf-8')),
             similarities=book_details[1][0],
             dataset_image_link=book.get('image'),
-            local=book.get('local'),
             reviews=reviews
         )
 
@@ -108,11 +105,9 @@ def show_matches():
     # According to which tecnique is selected, good percentage
     # and matches image are shown
     # if request.form['tecnique'] == 'sift': TODO
-    # if the image is stored locally
     good_perc = sift_match_images(flann,
                                   request.args.get('query'),
-                                  request.args.get('image'),
-                                  request.args.get('local'))
+                                  request.args.get('image'))
 
     return render_template('matches.html',
                            matches_image='static/matches.png',
@@ -159,7 +154,7 @@ def add_new_book():
         picture = request.args.get('picture')
         image = os.path.join(app.config['UPLOAD_FOLDER'], picture)
         key = add_book(title, author, image, rating,
-                       price, [review], editor, local=True)
+                       price, [review], editor)
         if key:
             flash('New book succesfully inserted')
             print key
