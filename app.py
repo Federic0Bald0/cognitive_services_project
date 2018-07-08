@@ -1,18 +1,15 @@
 # coding: utf-8
 import os
 from werkzeug import secure_filename
-from src.google_api import blocks_were_enough
-from src.areSimilar import sift_match_images, bf
+from src.areSimilar import sift_match_images, flann
 from src.datastore import find_book, add_book, get_reviews, add_review, client
 from flask import Flask, redirect, url_for, request, render_template, flash
-from skimage import io
 
 app = Flask(__name__)
 app.secret_key = 'vogliamo30elode'
 app.config['UPLOAD_FOLDER'] = 'static/pictures'
 
-
-# Templates and File Uploading ###
+# Templates and File Uploading
 
 
 @app.route('/')
@@ -23,55 +20,72 @@ def show_home():
 @app.route('/result', methods=['POST'])
 def show_result():
     if request.method == 'POST':
+
         f = request.files['pic']
         filename = secure_filename(f.filename)
         f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        # book retrieved from datastore
+        # BLOCK SEARCH
         book_details = find_book(filename)
+        book = book_details[1][1]
+        good_perc = sift_match_images(flann,
+                                      book.get('image'),
+                                      filename,
+                                      book.get('local'))
+        # LINE SEARCH
+        book_details_lines = find_book(filename)
+        book_lines = book_details_lines[1][1]
+        good_perc_lines = sift_match_images(flann,
+                                            book_lines.get('image'),
+                                            filename,
+                                            book_lines.get('local'))
 
         # temporary threshold for match
-        if book_details[1][0][0] < 0.5 or book_details[1][0][1] < 0.5:
+        if (book_details[1][0][0] > 0.5 and
+                book_details[1][0][1] > 0.5 and
+                good_perc/100 > 0.4):
 
-            # retry for the second time
-            # lines will be used instead of blocks
-            book_details = find_book(filename)
-
-            if book_details[1][0][0] < 0.5 or book_details[1][0][1] < 0.5:
-
-                flash('The book is not available in our database, \
-                       would you like to enrich our application adding \
-                       this book ?')
-                return render_template('insert.html', picture=filename)
-        else:
-            # let's see if lines obtain a better result than blocks
-            book_details_lines = find_book(filename)
             if ((book_details_lines[1][0][0] - book_details[1][0][0]) +
-                    (book_details_lines[1][0][1] - book_details[1][0][1]) > 0):
+                    (book_details_lines[1][0][1] - book_details[1][0][1]) +
+                    (good_perc_lines - good_perc) > 0):
                 # if similarities founded by lines are better,
                 # consider them instead of blocks
                 book_details = book_details_lines
-                # blocks_were_enough()
-            id = book_details[1][1].key.id
-            key = client.key('Book', id)
-            reviews = get_reviews(key)
-            reviews = [review.get('review').decode('utf-8')
-                       for review in reviews]
+                book = book_lines
+
+        else:
+            # there is no match for the inserted book
+            flash('The book is not available in our database, \
+                       would you like to enrich our application adding \
+                       this book ?')
+            return render_template('insert.html', picture=filename)
+
+        id = book.key.id
+        key = client.key('Book', id)
+        # get review for the retrieved book
+        reviews = get_reviews(key)
+        reviews = [review.get('review').decode('utf-8')
+                   for review in reviews]
         return render_template(
             'result.html',
             picture=filename,
             blocks=book_details[0],
             book_id=id,
+            price=book.get('price'),
+            rating=book.get('rating'),
             result=('Title: ' +
-                    book_details[1][1].get('title').encode('utf-8') +
+                    book.get('title').encode('utf-8') +
                     ', Author: ' +
-                    book_details[1][1].get('author').encode('utf-8')),
+                    book.get('author').encode('utf-8')),
             similarities=book_details[1][0],
-            dataset_image_link=book_details[1][1].get('image'),
-            local=book_details[1][1].get('local'),
+            dataset_image_link=book.get('image'),
+            local=book.get('local'),
             reviews=reviews
         )
 
 
 @app.route('/comment', methods=['POST'])
+# add comment to book
 def store_comment():
     review = request.form['review']
     if len(review) > 1500:
@@ -82,41 +96,24 @@ def store_comment():
         render_template('home.html')
     book_id = request.args.get('book_id')
     book_key = client.key('Book', long(book_id))
-    key = add_review(book_key, review.encode('utf-8'))
+    add_review(book_key, review.encode('utf-8'))
     flash('Thank you, your comment is really valuable\
-          us')
+          for us')
     return render_template('home.html')
 
 
 @app.route('/matches', methods=['POST', 'GET'])
+# show sift matches
 def show_matches():
     # According to which tecnique is selected, good percentage
     # and matches image are shown
-    if request.form['tecnique'] == 'sift':
-        # << << << < Updated upstream
-        # if the image is stored locally
-        print 'aaaaaaaaaaaa' + request.args.get('local')
-        if request.args.get('local') == "True":
-            query = io.imread(request.args.get('query').encode('utf-8'))
-        else:
-            # Convert links into numpy array (right format for opencv)
-            query = io.imread('https:' + request.args.get('query')
-                              .encode('utf-8'))
-# == == == =
-#     query = []
-#     if request.args.get('local') == 'false':
-#         # Convert links into numpy array (right format for opencv)
-#         query = io.imread('https:' + request.args.get('query')
-#                           .encode('utf-8'))
-#     else:
-#         query = io.imread(request.args.get('query')
-#                           .encode('utf-8'))
+    # if request.form['tecnique'] == 'sift': TODO
+    # if the image is stored locally
+    good_perc = sift_match_images(flann,
+                                  request.args.get('query'),
+                                  request.args.get('image'),
+                                  request.args.get('local'))
 
-# >>>>>> > Stashed changes
-    image = io.imread(os.path.join(app.config['UPLOAD_FOLDER'],
-                                   request.args.get('image')
-                                   .encode('utf-8')))
-    good_perc = sift_match_images(bf, query, image)
     return render_template('matches.html',
                            matches_image='static/matches.png',
                            good=good_perc)
@@ -126,33 +123,39 @@ def show_matches():
 def add_new_book():
     # add new book to database
     if request.method == 'POST':
-
+        # title
         title = request.form['title']
         if not title:
             flash('You must insert a Title')
             return render_template('insert.html')
         else:
             title = title.lower()
+        # author
         author = request.form['author']
         if not author:
             flash('You must insert a Author')
             return render_template('insert.html')
         else:
             author = author.lower()
+        # editor
         editor = request.form['editor']
         if editor:
             editor = editor.lower()
+        # rating
         rating = request.form['rating']
         if rating:
             rating = int(rating)
             if rating < 1 or rating > 5:
                 flash('Rating must be number between 1 and 5')
                 return render_template('insert.html')
+        # price
         price = request.form['price']
+        # comment
         review = request.form['review']
         if len(review) > 1500:
             flash('You exceeded the limit of 1500 characters in the review')
             return render_template('insert.html')
+        # picture of the book stored locally
         picture = request.args.get('picture')
         image = os.path.join(app.config['UPLOAD_FOLDER'], picture)
         key = add_book(title, author, image, rating,
@@ -183,55 +186,3 @@ def add_header(r):
 if __name__ == '__main__':
     app.debug = True
     app.run(debug=True)
-
-'''
-# Hello World #
-
-@app.route('/')
-def helloWorld():
-    return 'Hello World!'
-
-
-@app.route('/hello/<name>')
-def hello_world(name):
-    return 'Hello %s!' % name
-
-
-@app.route('/admin')
-def hello_admin():
-    return 'Hello Adimn'
-
-
-@app.route('/guest/<guest>')
-def hello_guest(guest):
-    return 'Hello, guest %s!' % guest
-
-
-@app.route('/user/<name>')
-def hello_user(name):
-    if name == 'admin':
-        return redirect(url_for('hello_admin'))
-    else:
-        return redirect(url_for('hello_guest', guest=name))
-
-################################
-
-# POST Request to Python from HTML ###
-
-
-@app.route('/success/<name>')
-def success(name):
-    return "Welcome %s!" % name
-
-
-@app.route('/login', methods=['POST', 'GET'])
-def login():
-    if request.method == 'POST':
-        user = request.form['nm']
-        return redirect(url_for('success', name=user))
-    else:
-        user = request.args.get('nm')
-        return redirect(url_for('success', name=user))
-
-##########################################
-'''

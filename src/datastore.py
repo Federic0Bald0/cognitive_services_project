@@ -10,6 +10,7 @@ client = datastore.Client.from_service_account_json(
 CSV = 'dataset/dataset.csv'
 
 
+# add starting dataset in dataset/dataset.csv
 def add_csv():
     with open(CSV) as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
@@ -20,6 +21,7 @@ def add_csv():
                      row[5], reviews, row[2])
 
 
+# add a single book
 def add_book(title, author, image, rating=None, price=None,
              reviews=None, editor=None, local=False):
 
@@ -46,6 +48,7 @@ def add_book(title, author, image, rating=None, price=None,
     return book.key
 
 
+# add a review related to a book
 def add_review(book_key, review):
 
     key = client.key('Review')
@@ -115,13 +118,7 @@ def search_book(generic_title, cursor=None, similarity=[0, 0], best_book=None):
     if next_cursor:
         return search_book(generic_title, next_cursor, similarity, best_book)
 
-# <<<<<<< Updated upstream
     return (similarity, best_book)
-# =======
-#     return (similarity, best_book.get('title'),
-#             best_book.get('author'), best_book.get('image'),
-#             best_book.get('local'))
-# >>>>>>> Stashed changes
 
 
 # check if the ratio1 is better than ratio2
@@ -168,20 +165,3 @@ def find_book(book_file):
 
     blocks = call_vision_api(book_file)
     return blocks, search_book(blocks)
-
-# book_key = add_book(3,
-#                     title="Harry Potter e i doni della morte",
-#                     author="J. K. Rowling",
-#                     image="this is a placeholder",
-#                     )
-
-# books, next_cursor = get_some_books()
-# print books
-# books, _ = get_some_books(next_cursor)
-# print books
-
-# delete_book(book_key)
-
-
-if __name__ == '__main__':
-    print call_vision_api('IMAGE_2018-07-04_100013.jpg')

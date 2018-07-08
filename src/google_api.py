@@ -15,13 +15,6 @@ PATH_IMAGES = 'static/pictures/'
 googleJson = ""
 
 
-# used to set the json to empty string
-# when the right book has been found with blocks
-def blocks_were_enough():
-    global googleJson
-    googleJson = ""
-
-
 def encode_image(picture):
     with open(PATH_IMAGES + picture, 'rb') as img:
         img_content = img.read()
@@ -45,25 +38,6 @@ def call_vision_api(picture, useBlocks=True):
         ]
     }
 
-    # JSON for a request with an URL ###
-    # request = {
-    #         "requests": [
-    #             {
-    #                 "image": {
-    #                     "source": {
-    #                         "imageUri": url
-    #                     }
-    #                 },
-    #                 "features": [
-    #                     {
-    #                         "type": "LOGO_DETECTION",
-    #                         "maxResults": 1
-    #                     }
-    #                 ]
-    #             }
-    #         ]
-    #     }
-
     global googleJson
 
     # if this is the first try
@@ -84,10 +58,6 @@ def call_vision_api(picture, useBlocks=True):
         googleJson = ""
         print "trying lines"
         return lines
-
-    # print type(json.dumps(extractBlocks(r.text)))
-    # print type(r.text))
-    # return r.text
 
 
 def extractBlocks(googleJson):
@@ -150,14 +120,14 @@ def extractLines(googleJson):
     return text
 
 
-def getArea(boxsize):
-    x = np.array([])
-    y = np.array([])
-    for vertices in boxsize:
-        x = np.append(x, [vertices['x']])
-        y = np.append(y, [vertices['y']])
+# def getArea(boxsize):
+#     x = np.array([])
+#     y = np.array([])
+#     for vertices in boxsize:
+#         x = np.append(x, [vertices['x']])
+#         y = np.append(y, [vertices['y']])
 
-    return 0.5 * np.abs(np.dot(x, np.roll(y, 1)) - np.dot(y, np.roll(x, 1)))
+#     return 0.5 * np.abs(np.dot(x, np.roll(y, 1)) - np.dot(y, np.roll(x, 1)))
 
 
 def getStringsDiff(string1, string2):

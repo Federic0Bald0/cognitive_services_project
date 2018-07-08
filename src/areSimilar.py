@@ -2,6 +2,7 @@ import os
 import sys
 import cv2 as cv
 import numpy as np
+from skimage import io
 from matplotlib import pyplot as plt
 
 
@@ -162,16 +163,15 @@ def surf_match(matcher):
 
 
 # function to compare 2 specific images
-def sift_match_images(matcher, query, image):
+def sift_match_images(matcher, query_path, image_path, local):
+    if local:
+        query = io.imread(query_path.encode('utf-8'))
+    else:
+        # Convert links into numpy array (right format for opencv)
+        query = io.imread('https:' + query_path.encode('utf-8'))
 
-    # The following lines are commented because
-    # these steps are done in app.py with skimage
-
-    # queryPath = queriesPath + query
-    # imagePath = imagesPath + image
-
-    # img1 = cv.imread(queryPath, 0)          # queryImage
-    # img2 = cv.imread(imagePath, 0)          # trainImage
+    image = io.imread(os.path.join('static/pictures',
+                                   image_path.encode('utf-8')))
 
     # Initiate SIFT detector
     sift = cv.xfeatures2d.SIFT_create()
