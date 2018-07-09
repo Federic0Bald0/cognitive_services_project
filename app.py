@@ -20,7 +20,6 @@ def show_home():
 @app.route('/result', methods=['POST'])
 def show_result():
     if request.method == 'POST':
-
         f = request.files['pic']
         filename = secure_filename(f.filename)
         f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -41,7 +40,7 @@ def show_result():
         # temporary threshold for match
         if (book_details[1][0][0] > 0.5 and
                 book_details[1][0][1] > 0.5 and
-                good_perc/100 > 0.4):
+                good_perc/100 > 0.3):
 
             if ((book_details_lines[1][0][0] - book_details[1][0][0]) +
                     (book_details_lines[1][0][1] - book_details[1][0][1]) +
@@ -157,7 +156,6 @@ def add_new_book():
                        price, [review], editor)
         if key:
             flash('New book succesfully inserted')
-            print key
             return render_template('home.html')
         flash('Error inserting book')
         return render_template('home.html')

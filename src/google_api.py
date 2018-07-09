@@ -50,13 +50,13 @@ def call_vision_api(picture, useBlocks=True):
 
         )
         googleJson = r.text
-        print "Trying blocks"
+        # print "Trying blocks"
         return extractBlocks(googleJson)
     else:
         lines = extractLines(googleJson)
         # next time retry with blocks
         googleJson = ""
-        print "trying lines"
+        # print "trying lines"
         return lines
 
 

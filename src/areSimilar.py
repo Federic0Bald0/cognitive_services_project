@@ -182,17 +182,17 @@ def sift_match_images(matcher, query_path, image_path):
         if m.distance < distance_coef * n.distance:
             good.append([m])
 
-    print
-    print '***********'
-    print 'query:', query
-    print 'image:', image
-    print
+    # print
+    # print '***********'
+    # print 'query:', query
+    # print 'image:', image
+    # print
 
-    print 'descriptors image 1:',  len(des1)
-    print 'descriptors image 2:', len(des2)
-    print 'good:', len(good)
-    print('good percentage: ' +
-          str(len(good) * 100.0 / len(des1)) + '%')
+    # print 'descriptors image 1:',  len(des1)
+    # print 'descriptors image 2:', len(des2)
+    # print 'good:', len(good)
+    # print('good percentage: ' +
+    #       str(len(good) * 100.0 / len(des1)) + '%')
     # cv.drawMatchesKnn expects list of lists as matches.
     img3 = cv.drawMatchesKnn(query, kp1, image, kp2,
                              good, flags=2, outImg=None)
