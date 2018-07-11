@@ -146,3 +146,4 @@ def run_test(test_CSV):
 
 
 run_test(test_CSV_negative)
+run_test(test_CSV_positive)
