@@ -6,14 +6,43 @@
         {% endfor %}
       {% endif %}
 {% endwith %}
-    <form action = "http://localhost:5000/result" method = "POST" enctype = "multipart/form-data">
+	<form action = "http://localhost:5000/result" method = "POST" enctype = "multipart/form-data">
+		<div class="form-group">
         <input type = "file" name = "pic" accept="image/*" onchange="readURL(this);" />
-
-         <input type = "submit"/>
+		</div>
+        <input type = "submit"/>
     </form>
 
-    <img id="inputpic" src="#" alt=""/>
+	<img id="inputpic" src="#" alt=""/>
+    <div class="panel panel-default col-md-5 pull-right">
+	<div class="panel-body">
+		<pre>
 
+			How to use the application:
+
+			Step 1.
+			Take a picture of the cover of a book
+			you would like to look up
+
+			Step 2.
+			Use the option choose to update it, then
+			press the submit button.
+
+			Step 3.
+			After a few seconds, if the book is available
+			in our database you will visualize informations
+			about the book, such as price, rating and comments
+			of other readers.
+
+			If the book is not available you can help us
+			make this appliction better adding this book
+			to our database, it takes just few seconds.
+
+			Thank you !
+
+		</pre>
+	</div>
+    </div>
     <script type="text/javascript">
 		function readURL(input) {
         	if (input.files && input.files[0]) {
