@@ -5,10 +5,11 @@ from src.datastore import find_book
 from src.areSimilar import sift_match_images, flann
 
 
-test_CSV = 'dataset/testset.csv'
+test_CSV_positive = 'dataset/testset_positive.csv'
+test_CSV_negative = 'dataset/testset_negative.csv'
 
 
-def run_test():
+def run_test(test_CSV):
 
     with open(test_CSV) as csvtest:
         reader = csv.reader(csvtest, delimiter=',')
@@ -98,14 +99,23 @@ def run_test():
                 print 'BAD lines match'
             if title_test != row[0] and author_test != row[1]:
                 print title_test, author_test
+    # print 'book number'
     # print book_number
+    # print 'title blocks'
     # print title_blocks
+    # print 'author blocks'
     # print author_blocks
+    # print 'time blocks'
     # print time_blocks
+    # print 'SIFT blocks'
     # print match_blocks
+    # print 'title lines'
     # print title_lines
+    # print 'author lines'
     # print author_lines
+    # print 'time lines'
     # print time_lines
+    # print 'SIFT lines'
     # print match_lines
     # plot blocks match
     plt.plot(book_number, title_blocks)
@@ -134,4 +144,5 @@ def run_test():
     plt.ylabel('sift lines ratio')
     plt.show()
 
-run_test()
+
+run_test(test_CSV_negative)
