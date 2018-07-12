@@ -1,8 +1,10 @@
+import os
 import csv
 import time
+import cv2 as cv
 import matplotlib.pyplot as plt
 from src.datastore import find_book
-from src.areSimilar import sift_match_images, flann
+from src.areSimilar import sift_match_images, flann, bf
 
 
 test_CSV_positive = 'dataset/testset_positive.csv'
@@ -145,5 +147,134 @@ def run_test(test_CSV):
     plt.show()
 
 
+queriesPath = 'src/Book_Covers/Query/'
+imagesPath = 'src/Book_Covers/Images/'
+coef = [0.75, 0.80, 0.85, 0.90, 0.95]
+
+
+def testing_sift():
+    time_bf = []
+    time_flann = []
+    flann1 = []
+    bf1 = []
+    flann2 = []
+    bf2 = []
+    flann3 = []
+    bf3 = []
+    flann4 = []
+    bf4 = []
+    flann5 = []
+    bf5 = []
+    sift = cv.xfeatures2d.SIFT_create()
+
+    for query in os.listdir(queriesPath):
+        if not query.startswith('.'):
+            print '**************************'
+            print query
+            print '**************************'
+            queryPath = queriesPath + query
+            img1 = cv.imread(queryPath, 0)
+            best = {'0.75': ([0, 0], ['', '']),
+                    '0.8': ([0, 0], ['', '']),
+                    '0.85': ([0, 0], ['', '']),
+                    '0.9': ([0, 0], ['', '']),
+                    '0.95': ([0, 0], ['', ''])}
+            time_match = [0, 0]
+            for image in os.listdir(imagesPath):
+                if not image.startswith('.'):
+                    imagePath = imagesPath + image
+                    img2 = cv.imread(imagePath, 0)
+
+                    # Initiate SIFT detector
+                    # find the keypoints and descriptors with SIFT
+                    t0 = int(round(time.time() * 1000))
+                    kp1, des1 = sift.detectAndCompute(img1, None)
+                    kp2, des2 = sift.detectAndCompute(img2, None)
+                    # matcher
+                    bf_matches = bf.knnMatch(des1, des2, k=2)
+                    tf_bf = int(round(time.time() * 1000))
+                    flann_matches = flann.knnMatch(des1, des2, k=2)
+                    tf_flann = int(round(time.time() * 1000))
+                    # time
+                    time_match[0] = tf_bf - t0
+                    time_match[1] = tf_flann - t0
+                     # good point using dinstance coef
+                    for distance_coef in coef:
+                        bf_good_match = []
+                        for m, n in bf_matches:
+                            if m.distance < distance_coef * n.distance:
+                                bf_good_match.append([m])
+                        flann_good_match = []
+                        for m, n in flann_matches:
+                            if m.distance < distance_coef * n.distance:
+                                flann_good_match.append([m])
+
+                        bf_best = len(bf_good_match) * 100.0 / len(des1)
+                        flann_best = ((len(flann_good_match) * 100.0) /
+                                      len(des1))
+
+                        if best[str(distance_coef)][0][0] < bf_best:
+                            best[str(distance_coef)][0][0] = bf_best
+                            best[str(distance_coef)][1][0] = image
+
+                        if (best[str(distance_coef)][0][1] < flann_best):
+                            best[str(distance_coef)][0][1] = flann_best
+                            best[str(distance_coef)][1][1] = image
+
+            print 'BF time ' + str(time_match[0])
+            print 'FLANN time ' + str(time_match[1])
+            time_bf.append(time_match[0])
+            time_flann.append(time_match[1])
+            print 'Best image with differnt coefficient:'
+            print '0.75'
+            print 'BF ' + str(best['0.75'][0][0])
+            bf1.append(best['0.75'][0][0])
+            print 'BF_image ' + best['0.75'][1][0]
+            print 'FLANN ' + str(best['0.75'][0][1])
+            flann1.append(best['0.75'][0][1])
+            print 'FLANN_image ' + best['0.75'][1][1]
+            print '0.80'
+            print 'BF ' + str(best['0.8'][0][0])
+            bf2.append(best['0.8'][0][0])
+            print 'BF_image ' + best['0.8'][1][0]
+            print 'FLANN ' + str(best['0.8'][0][1])
+            flann2.append(best['0.8'][0][1])
+            print 'FLANN_image ' + best['0.8'][1][1]
+            print '0.85'
+            print 'BF ' + str(best['0.85'][0][0])
+            bf3.append(best['0.85'][0][0])
+            print 'BF_image ' + best['0.85'][1][0]
+            print 'FLANN ' + str(best['0.85'][0][1])
+            flann3.append(best['0.85'][0][1])
+            print 'FLANN_image ' + best['0.85'][1][1]
+            print '0.90'
+            print 'BF ' + str(best['0.9'][0][0])
+            bf4.append(best['0.9'][0][0])
+            print 'BF_image ' + best['0.9'][1][0]
+            print 'FLANN ' + str(best['0.9'][0][1])
+            flann4.append(best['0.9'][0][1])
+            print 'FLANN_image ' + best['0.9'][1][1]
+            print '0.95'
+            print 'BF ' + str(best['0.95'][0][0])
+            bf5.append(best['0.95'][0][0])
+            print 'BF_image ' + best['0.95'][1][0]
+            print 'FLANN ' + str(best['0.95'][0][1])
+            flann5.append(best['0.95'][0][1])
+            print 'FLANN_image ' + best['0.95'][1][1]
+
+    print time_bf
+    print time_flann
+    print bf1
+    print flann1
+    print bf2
+    print flann2
+    print bf3
+    print flann3
+    print bf4
+    print flann4
+    print bf5
+    print flann5
+
+# testing_sift()
 run_test(test_CSV_negative)
 run_test(test_CSV_positive)

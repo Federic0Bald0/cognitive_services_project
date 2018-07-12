@@ -39,12 +39,14 @@ def show_result():
         good_perc_lines = sift_match_images(flann,
                                             book_lines.get('image'),
                                             filename)
-
+        block_is_match = (book_details[1][0][0] > 0.5 and
+                          book_details[1][0][1] > 0.5 and
+                          good_perc/100 > 0.4)
+        line_is_match = (book_details_lines[1][0][0] > 0.5 and
+                         book_details_lines[1][0][1] > 0.5 and
+                         good_perc_lines/100 > 0.4)
         # temporary threshold for match
-        if (book_details[1][0][0] > 0.5 and
-                book_details[1][0][1] > 0.5 and
-                good_perc/100 > 0.3):
-
+        if (block_is_match or line_is_match):
             if ((book_details_lines[1][0][0] - book_details[1][0][0]) +
                     (book_details_lines[1][0][1] - book_details[1][0][1]) +
                     (good_perc_lines - good_perc) > 0):

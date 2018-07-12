@@ -89,7 +89,7 @@ def sift_match(matcher):
             # find the keypoints and descriptors with SIFT
             kp1, des1 = sift.detectAndCompute(img1, None)
             kp2, des2 = sift.detectAndCompute(img2, None)
-            # BFMatcher with default params
+            # Matcher with default params
             matches = matcher.knnMatch(des1, des2, k=2)
             # Apply ratio test
             good = []
