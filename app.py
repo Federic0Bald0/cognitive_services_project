@@ -20,6 +20,9 @@ def show_home():
 @app.route('/result', methods=['POST'])
 def show_result():
     if request.method == 'POST':
+        if not request.files:
+            flash('You must choose a picture')
+            return render_template('home.html')
         f = request.files['pic']
         filename = secure_filename(f.filename)
         f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
