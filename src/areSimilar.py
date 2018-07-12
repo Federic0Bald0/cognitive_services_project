@@ -33,39 +33,40 @@ bf = cv.BFMatcher()
 
 def ORB_match():
     for query in os.listdir(queriesPath):
-        for image in os.listdir(imagesPath):
+        if not query.startswith('.'):
+            for image in os.listdir(imagesPath):
+                if not image.startswith('.'):
+                    queryPath = queriesPath + query
+                    imagePath = imagesPath + image
 
-            queryPath = queriesPath + query
-            imagePath = imagesPath + image
+                    img1 = cv.imread(queryPath, 0)          # queryImage
+                    img2 = cv.imread(imagePath, 0)          # trainImage
 
-            img1 = cv.imread(queryPath, 0)          # queryImage
-            img2 = cv.imread(imagePath, 0)          # trainImage
+                    # Initiate ORB detector
+                    orb = cv.ORB_create()
+                    # find the keypoints and descriptors with ORB
+                    kp1, des1 = orb.detectAndCompute(img1, None)
+                    kp2, des2 = orb.detectAndCompute(img2, None)
+                    # Match descriptors.
+                    matcher = cv.BFMatcher(cv.NORM_HAMMING, crossCheck=True)
+                    matches = matcher.match(des1, des2)
+                    # Sort them in the order of their distance.
+                    matches = sorted(matches, key=lambda x: x.distance)
+                    print
+                    print '***********'
+                    print 'query:', query
+                    print 'image:', image
+                    print
 
-            # Initiate ORB detector
-            orb = cv.ORB_create()
-            # find the keypoints and descriptors with ORB
-            kp1, des1 = orb.detectAndCompute(img1, None)
-            kp2, des2 = orb.detectAndCompute(img2, None)
-            # Match descriptors.
-            matcher = cv.BFMatcher(cv.NORM_HAMMING, crossCheck=True)
-            matches = matcher.match(des1, des2)
-            # Sort them in the order of their distance.
-            matches = sorted(matches, key=lambda x: x.distance)
-            print
-            print '***********'
-            print 'query:', query
-            print 'image:', image
-            print
-
-            print 'descriptors image 1:',  len(des1)
-            print 'descriptors image 2:', len(des2)
-            print 'good:', len(matches)
-            print('good percentage: ' +
-                  str(len(matches) * 100.0 / len(des1)) + '%')
-            # cv.drawMatchesKnn expects list of lists as matches.
-            # img3 = cv.drawMatchesKnn(img1, kp1, img2, kp2,
-            #                          good, flags=2, outImg=None)
-            # plt.imshow(img3), plt.show()
+                    print 'descriptors image 1:',  len(des1)
+                    print 'descriptors image 2:', len(des2)
+                    print 'good:', len(matches)
+                    print('good percentage: ' +
+                          str(len(matches) * 100.0 / len(des1)) + '%')
+                    # cv.drawMatchesKnn expects list of lists as matches.
+                    # img3 = cv.drawMatchesKnn(img1, kp1, img2, kp2,
+                    #                          good, flags=2, outImg=None)
+                    # plt.imshow(img3), plt.show()
 
 
 def sift_match(matcher):
@@ -77,42 +78,44 @@ def sift_match(matcher):
     """
 
     for query in os.listdir(queriesPath):
-        for image in os.listdir(imagesPath):
+        if not query.startswith('.'):
+            for image in os.listdir(imagesPath):
+                if not image.startswith('.'):
 
-            queryPath = queriesPath + query
-            imagePath = imagesPath + image
+                    queryPath = queriesPath + query
+                    imagePath = imagesPath + image
 
-            img1 = cv.imread(queryPath, 0)          # queryImage
-            img2 = cv.imread(imagePath, 0)          # trainImage
-            # Initiate SIFT detector
-            sift = cv.xfeatures2d.SIFT_create()
-            # find the keypoints and descriptors with SIFT
-            kp1, des1 = sift.detectAndCompute(img1, None)
-            kp2, des2 = sift.detectAndCompute(img2, None)
-            # Matcher with default params
-            matches = matcher.knnMatch(des1, des2, k=2)
-            # Apply ratio test
-            good = []
+                    img1 = cv.imread(queryPath, 0)          # queryImage
+                    img2 = cv.imread(imagePath, 0)          # trainImage
+                    # Initiate SIFT detector
+                    sift = cv.xfeatures2d.SIFT_create()
+                    # find the keypoints and descriptors with SIFT
+                    kp1, des1 = sift.detectAndCompute(img1, None)
+                    kp2, des2 = sift.detectAndCompute(img2, None)
+                    # Matcher with default params
+                    matches = matcher.knnMatch(des1, des2, k=2)
+                    # Apply ratio test
+                    good = []
 
-            for m, n in matches:
-                if m.distance < distance_coef * n.distance:
-                    good.append([m])
+                    for m, n in matches:
+                        if m.distance < distance_coef * n.distance:
+                            good.append([m])
 
-            print
-            print '***********'
-            print 'query:', query
-            print 'image:', image
-            print
+                    print
+                    print '***********'
+                    print 'query:', query
+                    print 'image:', image
+                    print
 
-            print 'descriptors image 1:',  len(des1)
-            print 'descriptors image 2:', len(des2)
-            print 'good:', len(good)
-            print('good percentage: ' +
-                  str(len(good) * 100.0 / len(des1)) + '%')
-            # cv.drawMatchesKnn expects list of lists as matches.
-            # img3 = cv.drawMatchesKnn(img1, kp1, img2, kp2,
-            #                          good, flags=2, outImg=None)
-            # plt.imshow(img3), plt.show()
+                    print 'descriptors image 1:',  len(des1)
+                    print 'descriptors image 2:', len(des2)
+                    print 'good:', len(good)
+                    print('good percentage: ' +
+                          str(len(good) * 100.0 / len(des1)) + '%')
+                    # cv.drawMatchesKnn expects list of lists as matches.
+                    # img3 = cv.drawMatchesKnn(img1, kp1, img2, kp2,
+                    #                          good, flags=2, outImg=None)
+                    # plt.imshow(img3), plt.show()
 
 
 def surf_match(matcher):
@@ -124,42 +127,44 @@ def surf_match(matcher):
     """
 
     for query in os.listdir(queriesPath):
-        for image in os.listdir(imagesPath):
+        if not query.startswith('.'):
+            for image in os.listdir(imagesPath):
+                if not image.startswith('.'):
 
-            queryPath = queriesPath + query
-            imagePath = imagesPath + image
+                    queryPath = queriesPath + query
+                    imagePath = imagesPath + image
 
-            img1 = cv.imread(queryPath, 0)          # queryImage
-            img2 = cv.imread(imagePath, 0)          # trainImage
-            # Initiate SIFT detector
-            surf = cv.xfeatures2d.SURF_create()
-            # find the keypoints and descriptors with surf
-            kp1, des1 = surf.detectAndCompute(img1, None)
-            kp2, des2 = surf.detectAndCompute(img2, None)
-            # BFMatcher with default params
-            matches = matcher.knnMatch(des1, des2, k=2)
-            # Apply ratio test
-            good = []
+                    img1 = cv.imread(queryPath, 0)          # queryImage
+                    img2 = cv.imread(imagePath, 0)          # trainImage
+                    # Initiate SIFT detector
+                    surf = cv.xfeatures2d.SURF_create()
+                    # find the keypoints and descriptors with surf
+                    kp1, des1 = surf.detectAndCompute(img1, None)
+                    kp2, des2 = surf.detectAndCompute(img2, None)
+                    # BFMatcher with default params
+                    matches = matcher.knnMatch(des1, des2, k=2)
+                    # Apply ratio test
+                    good = []
 
-            for m, n in matches:
-                if m.distance < distance_coef * n.distance:
-                    good.append([m])
+                    for m, n in matches:
+                        if m.distance < distance_coef * n.distance:
+                            good.append([m])
 
-            print
-            print '***********'
-            print 'query:', query
-            print 'image:', image
-            print
+                    print
+                    print '***********'
+                    print 'query:', query
+                    print 'image:', image
+                    print
 
-            print 'descriptors image 1:',  len(des1)
-            print 'descriptors image 2:', len(des2)
-            print 'good:', len(good)
-            print('good percentage: ' +
-                  str(len(good) * 100.0 / len(des1)) + '%')
-            # cv.drawMatchesKnn expects list of lists as matches.
-            # img3 = cv.drawMatchesKnn(img1, kp1, img2, kp2,
-            #                          good, flags=2, outImg=None)
-            # plt.imshow(img3), plt.show()
+                    print 'descriptors image 1:',  len(des1)
+                    print 'descriptors image 2:', len(des2)
+                    print 'good:', len(good)
+                    print('good percentage: ' +
+                          str(len(good) * 100.0 / len(des1)) + '%')
+                    # cv.drawMatchesKnn expects list of lists as matches.
+                    # img3 = cv.drawMatchesKnn(img1, kp1, img2, kp2,
+                    #                          good, flags=2, outImg=None)
+                    # plt.imshow(img3), plt.show()
 
 
 # function to compare 2 images

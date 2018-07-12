@@ -198,7 +198,7 @@ def testing_sift():
                     # time
                     time_match[0] = tf_bf - t0
                     time_match[1] = tf_flann - t0
-                     # good point using dinstance coef
+                    # good point using dinstance coef
                     for distance_coef in coef:
                         bf_good_match = []
                         for m, n in bf_matches:
