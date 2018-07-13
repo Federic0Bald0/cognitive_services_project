@@ -41,19 +41,27 @@ def show_result():
                                             filename)
         block_is_match = (book_details[1][0][0] > 0.5 and
                           book_details[1][0][1] > 0.5 and
-                          good_perc/100 > 0.4)
+                          good_perc/100 > 0.45)
         line_is_match = (book_details_lines[1][0][0] > 0.5 and
                          book_details_lines[1][0][1] > 0.5 and
-                         good_perc_lines/100 > 0.4)
+                         good_perc_lines/100 > 0.45)
+        line_is_better = (book_details_lines[1][0][0] >
+                          book_details[1][0][0] and
+                          book_details_lines[1][0][1]
+                          > book_details[1][0][1] and
+                          good_perc_lines > good_perc)
+
         # temporary threshold for match
         if (block_is_match or line_is_match):
-            if ((book_details_lines[1][0][0] - book_details[1][0][0]) +
-                    (book_details_lines[1][0][1] - book_details[1][0][1]) +
-                    (good_perc_lines - good_perc) > 0):
+            if not block_is_match:
                 # if similarities founded by lines are better,
                 # consider them instead of blocks
                 book_details = book_details_lines
                 book = book_lines
+            elif line_is_match:
+                if (line_is_better):
+                    book_details = book_details_lines
+                    book = book_lines
 
         else:
             # there is no match for the inserted book
@@ -76,9 +84,9 @@ def show_result():
             price=book.get('price'),
             rating=book.get('rating'),
             result=('Title: ' +
-                    book.get('title').encode('utf-8') +
+                    book.get('title').decode('utf-8').encode('utf-8') +
                     ', Author: ' +
-                    book.get('author').encode('utf-8')),
+                    book.get('author').decode('utf-8').encode('utf-8')),
             similarities=book_details[1][0],
             dataset_image_link=book.get('image'),
             reviews=reviews

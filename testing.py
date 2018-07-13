@@ -95,7 +95,7 @@ def run_test(test_CSV):
             print 'time: ' + str(tot_lines_search) + ' millisecond'
             if (book_details_lines[1][0][0] > 0.5 and
                     book_details_lines[1][0][1] > 0.5 and
-                    good_perc_lines/100 > 0.4):
+                    good_perc_lines/100 > 0.45):
                 print 'GOOD lines match'
             else:
                 print 'BAD lines match'
