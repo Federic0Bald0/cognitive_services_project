@@ -176,26 +176,6 @@ precision image match: 76.8421052632%
 time: 2528 millisecond
 GOOD lines match
 +++++++++++++++++++++
-0010.jpg
-+++++++++++++++++++++
-********************
-BLOCK SEARCH
-test case: 10
-ratio title: 54.2372881356%
-ration author: 72.2222222222%
-precision image match: 48.1973434535%
-time: 7544 millisecond
-GOOD blocks match
-idolatria. i falsi dei del nemico alessandro vanoli <-
-********************
-LINE SEARCH
-test case: 10
-ratio title: 100.0%
-ration author: 72.0%
-precision image match: 73.4756097561%
-time: 3839 millisecond
-GOOD lines match
-+++++++++++++++++++++
 0011.jpg
 +++++++++++++++++++++
 ********************

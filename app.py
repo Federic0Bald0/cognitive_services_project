@@ -45,11 +45,11 @@ def show_result():
         line_is_match = (book_details_lines[1][0][0] > 0.5 and
                          book_details_lines[1][0][1] > 0.5 and
                          good_perc_lines/100 > 0.45)
-        line_is_better = (book_details_lines[1][0][0] >
-                          book_details[1][0][0] and
-                          book_details_lines[1][0][1]
-                          > book_details[1][0][1] and
-                          good_perc_lines > good_perc)
+        line_is_better = ((book_details_lines[1][0][0] -
+                          book_details[1][0][0]) +
+                          (book_details_lines[1][0][1] -
+                           book_details[1][0][1]) +
+                          (good_perc_lines - good_perc) > 0)
 
         # temporary threshold for match
         if (block_is_match or line_is_match):
